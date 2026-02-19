@@ -6,6 +6,7 @@ import { RouterLink, RouterView } from 'vue-router'
   <header>
       <nav>
         <RouterLink to="/vendre" class="btn btn-primary p-2 text-black">Vendre un jeu</RouterLink>
+        <RouterLink to="/register" class="=btn btn-primary">Inscription</RouterLink>
       </nav>
   </header>
 
