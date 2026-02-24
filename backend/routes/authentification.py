@@ -4,6 +4,8 @@ import bd
 import re
 from flask.logging import create_logger
 import bcrypt
+import jwt
+import datetime
 
 bp_auth = Blueprint('auth',__name__)
 
@@ -78,7 +80,6 @@ def login():
     email = data.get("email","").strip()
     password = data.get("password", "")
     
-    
     try:
         with bd.creer_connexion() as conn:
             with conn.get_curseur() as curseur:
@@ -91,17 +92,22 @@ def login():
                 utilisateur = curseur.fetchone()
     except mysql.connector.Error as err:
             abort(500)
+            
     if (utilisateur):
         userBytes = password.encode('utf-8')
         hash = utilisateur['MotDePasse'].encode('utf-8')
         result  = bcrypt.checkpw(userBytes,hash)
         
         if (result):
-            session['utilisateur_id'] = utilisateur["Id"]
-            session['courriel'] = utilisateur["Courriel"]
-            current_app.logger.info(f"CONNEXION D'UN COMPTE : Utilisateur ID : {curseur.lastrowid} {email}")
-        return jsonify({"succes": True}), 201
-
+            token = jwt.encode({
+                'utilisateur_id': utilisateur['Id'],
+                'courriel': utilisateur['Courriel'],
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)
+            }, current_app.secret_key, algorithm='HS256')
+            # current_app.logger.info(f"CONNEXION D'UN COMPTE : Utilisateur ID : {curseur.lastrowid} {email}")
+            # return jsonify({"succes": True}), 201
+            return jsonify({"token": token}), 200
+        return jsonify({"erreurs": {"general": "Courriel ou mot de passe invalide"}}), 401
 
 
     
