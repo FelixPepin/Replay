@@ -13,22 +13,22 @@
                 <form @submit.prevent="soumettre" method="post" action="http://localhost:5000/register" novalidate>
                     <div class="mb-3">
                         <label for="username" class="form-label">Nom d'utilisateur</label>
-                        <input v-model="username" type="text" id="username" name="username" class="form-control"/>
+                        <input v-model="username" type="text" id="username" name="username" class="form-control" />
                     </div>
 
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
-                        <input v-model="email" type="email" id="email" name="email" class="form-control"/>
+                        <input v-model="email" type="email" id="email" name="email" class="form-control" />
                     </div>
 
                     <div class="mb-3">
                         <label for="password" class="form-label">Mot de passe</label>
-                        <input v-model="password" type="password" id="password" name="password" class="form-control"/>
+                        <input v-model="password" type="password" id="password" name="password" class="form-control" />
                     </div>
 
                     <div class="mb-3">
                         <label for="confirm" class="form-label">Confirmer le mot de passe</label>
-                        <input v-model="confirm" type="password" id="confirm" name="confirm" class="form-control"/>
+                        <input v-model="confirm" type="password" id="confirm" name="confirm" class="form-control" />
                     </div>
 
                     <button type="submit" class="btn btn-primary w-100">S'inscrire</button>
@@ -45,7 +45,7 @@
 
 <script setup>
 import { ref, reactive } from 'vue'
-import { useRouter } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 
 const router = useRouter()
 
@@ -81,7 +81,7 @@ async function soumettre() {
         const data = await reponse.json()
 
         if (reponse.ok) {
-            router.push('/')  
+            router.push('/')
         } else {
             Object.assign(erreurs, data.erreurs)
         }

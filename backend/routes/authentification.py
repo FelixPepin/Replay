@@ -60,3 +60,38 @@ def register():
 @bp_auth.route("/login",methods=['POST','GET'])
 def login():
     """Permet la connexion d'un compte utilisateur valide"""
+    
+    data = request.get_json()
+    
+    email = data.get("email","").strip()
+    password = data.get("password", "")
+    
+    
+    try:
+        with bd.creer_connexion() as conn:
+            with conn.get_curseur() as curseur:
+                curseur.execute('SELECT Id, NomUtilisateur, MotDePasse, Courriel FROM utilisateurs WHERE courriel = %(courriel)s',
+                    {
+                            'courriel' : email
+                    }
+                                    
+                )
+                utilisateur = curseur.fetchone()
+    except mysql.connector.Error as err:
+            abort(500)
+    if (utilisateur):
+        userBytes = password.encode('utf-8')
+        hash = utilisateur['MotDePasse'].encode('utf-8')
+        result  = bcrypt.checkpw(userBytes,hash)
+        
+        if (result):
+            session['utilisateur_id'] = utilisateur["Id"]
+            session['courriel'] = utilisateur["Courriel"]
+            current_app.logger.info(f"CONNEXION D'UN COMPTE : Utilisateur ID : {curseur.lastrowid} {email}")
+        return jsonify({"succes": True}), 201
+
+
+
+    
+    
+    
