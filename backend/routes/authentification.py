@@ -29,6 +29,18 @@ def register():
 
     if erreurs:
         return jsonify({"erreurs": erreurs}), 400
+    
+    with bd.creer_connexion() as conn:
+        with conn.get_curseur() as curseur:
+            curseur.execute(
+                'SELECT Id FROM utilisateurs WHERE Courriel = %(courriel)s',
+                {'courriel': email}
+            )
+            existant = curseur.fetchone()
+
+    if existant:
+        return jsonify({"erreurs": {"email": "Cette adresse courriel est déjà utilisée"}}), 400
+    
 
     try:
         salt = bcrypt.gensalt()
