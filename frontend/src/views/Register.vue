@@ -4,28 +4,31 @@
             <div class="col-mb-3">
                 <h1 class="mb-4">Créer un compte</h1>
 
-                <!-- <div class="alert alert-danger"></div>
-                <div class="alert alert-success"></div> -->
+                <div v-if="Object.keys(erreurs).length" class="alert alert-danger">
+                    <ul class="mb-0">
+                        <li v-for="(msg, champ) in erreurs" :key="champ">{{ msg }}</li>
+                    </ul>
+                </div>
 
-                <form>
+                <form @submit.prevent="soumettre" method="post" action="http://localhost:5000/register" novalidate>
                     <div class="mb-3">
                         <label for="username" class="form-label">Nom d'utilisateur</label>
-                        <input type="text" id="username" class="form-control" required />
+                        <input v-model="username" type="text" id="username" name="username" class="form-control"/>
                     </div>
 
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
-                        <input type="email" id="email" class="form-control" required />
+                        <input v-model="email" type="email" id="email" name="email" class="form-control"/>
                     </div>
 
                     <div class="mb-3">
                         <label for="password" class="form-label">Mot de passe</label>
-                        <input type="password" id="password" class="form-control" required />
+                        <input v-model="password" type="password" id="password" name="password" class="form-control"/>
                     </div>
 
                     <div class="mb-3">
                         <label for="confirm" class="form-label">Confirmer le mot de passe</label>
-                        <input type="password" id="confirm" class="form-control" required />
+                        <input v-model="confirm" type="password" id="confirm" name="confirm" class="form-control"/>
                     </div>
 
                     <button type="submit" class="btn btn-primary w-100">S'inscrire</button>
@@ -39,3 +42,51 @@
         </div>
     </div>
 </template>
+
+<script setup>
+import { ref, reactive } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const username = ref('')
+const email = ref('')
+const password = ref('')
+const confirm = ref('')
+const erreurs = reactive({})
+
+async function soumettre() {
+    console.log("Soummetre called")
+    Object.keys(erreurs).forEach(k => delete erreurs[k])
+
+    if (!username.value.trim()) erreurs.username = "Le nom d'utilisateur est requis"
+    if (!email.value.trim()) erreurs.email = "L'adresse courriel est requise"
+    if (!password.value) erreurs.password = "Le mot de passe est requis"
+    if (password.value !== confirm.value) erreurs.confirm = "Les deux mots de passe doivent correspondre"
+
+    if (Object.keys(erreurs).length > 0) return
+
+    try {
+        const reponse = await fetch('http://localhost:5000/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                username: username.value,
+                email: email.value,
+                password: password.value,
+                confirm: confirm.value
+            })
+        })
+
+        const data = await reponse.json()
+
+        if (reponse.ok) {
+            router.push('/')  
+        } else {
+            Object.assign(erreurs, data.erreurs)
+        }
+    } catch (e) {
+        erreurs.serveur = "Impossible de contacter le serveur"
+    }
+}
+</script>
