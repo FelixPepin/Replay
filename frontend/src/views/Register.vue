@@ -92,7 +92,7 @@ async function soumettre() {
             Object.assign(erreurs, data.erreurs)
         }
     } catch (e) {
-        erreurs.serveur = "Impossible de contacter le serveur"
+        erreurs.serveur = "Impossible de contacter le serveur" + e
     }
 }
 </script>

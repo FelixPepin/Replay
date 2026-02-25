@@ -70,7 +70,7 @@ async function soumettre() {
         }
     }
     catch (e) {
-        erreurs.serveur = "Impossible de contacter le serveur"
+        erreurs.serveur = "Impossible de contacter le serveur" + e
     }
 }
 </script>
