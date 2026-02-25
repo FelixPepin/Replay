@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import PageVendre from '../views/PageVendre.vue' 
 import Register from '../views/Register.vue'
 import Login from '@/views/Login.vue'
+import PageAchat from '@/views/PageAchat.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -34,6 +35,11 @@ const router = createRouter({
       path :'/login',
       name : 'login',
       component: Login
+    },
+    {
+      path: '/achat',
+      name : 'achat',
+      component : PageAchat
     }
   ],
 })
