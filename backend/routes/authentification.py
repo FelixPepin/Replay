@@ -51,11 +51,12 @@ def register():
         with bd.creer_connexion() as conn:
             with conn.get_curseur() as curseur:
                 curseur.execute(
-                    'INSERT INTO utilisateurs (NomUtilisateur, MotDePasse, Courriel) VALUES (%(nom_utilisateur)s, %(mdp_hache)s, %(courriel)s)',
+                    'INSERT INTO utilisateurs (NomUtilisateur, MotDePasse, Courriel, Role) VALUES (%(nom_utilisateur)s, %(mdp_hache)s, %(courriel)s,%(role)s)',
                     {
                         'nom_utilisateur': username,
                         'mdp_hache': motDePasseHashed,
-                        'courriel': email
+                        'courriel': email,
+                        'role' : 'vendeur'
                     }
                 )
 
@@ -102,6 +103,7 @@ def login():
             token = jwt.encode({
                 'utilisateur_id': utilisateur['Id'],
                 'courriel': utilisateur['Courriel'],
+                'role': utilisateur['Role'],
                 'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)
             }, current_app.secret_key, algorithm='HS256')
             # current_app.logger.info(f"CONNEXION D'UN COMPTE : Utilisateur ID : {curseur.lastrowid} {email}")
