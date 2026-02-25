@@ -3,8 +3,7 @@ import './assets/main.css'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 
-import 'bootstrap/dist/css/bootstrap.min.css'
-import 'bootstrap'
+import "bootswatch/dist/quartz/bootstrap.min.css";
 
 
 import App from './App.vue'
