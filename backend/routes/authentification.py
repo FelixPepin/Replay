@@ -84,7 +84,7 @@ def login():
     try:
         with bd.creer_connexion() as conn:
             with conn.get_curseur() as curseur:
-                curseur.execute('SELECT Id, NomUtilisateur, MotDePasse, Courriel FROM utilisateurs WHERE courriel = %(courriel)s',
+                curseur.execute('SELECT Id, NomUtilisateur, MotDePasse, Courriel, Role FROM utilisateurs WHERE courriel = %(courriel)s',
                     {
                             'courriel' : email
                     }

@@ -2,7 +2,7 @@
   <main>
     <div class="container mt-2">
       <div class="row">
-        <div v-if="!auth.estConnecte" class="col-mb-3">
+        <div v-if="auth.role === 'vendeur'" class="col-mb-3">
           <h1 class="mb-4">Mettre un jeu en vente</h1>
           <div v-if="Object.keys(erreurs).length" class="alert alert-danger">
             <ul class="mb-0">
@@ -115,7 +115,10 @@
           </form>
         </div>
         <div v-else>
-          <p class="alert alert-warning">Vous devez être connecté pour vendre un jeu.</p>
+          <p class="alert alert-warning">
+            Vous devez être vendeur pour vendre un jeu.
+            <router-link to="/login">Se connecter</router-link>
+          </p>
         </div>
       </div>
     </div>
@@ -126,7 +129,6 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { vue } from 'globals'
 export default {
   setup() {
     const auth = useAuthStore()
@@ -150,12 +152,15 @@ export default {
       if (!nomJeu.value.trim()) erreurs.nomJeu = 'Le nom du jeu est requis'
       if (!prix.value) erreurs.prix = 'Le prix du jeu est requis'
       if (prix.value > 60) erreurs.prix = 'Un jeu en revente ne peut pas valoir plus de 60$'
-      if (!photo.value) erreurs.photo = 'La photo du jeu est requis'
-      const fichier = photo.split('.')
-      const extension = fichier.pop()
-      const extensionPermis = ['JPG', 'JPEG', 'PNG', 'WEBP']
-      if (!extension.contains(extensionPermis))
-        erreurs.photo = 'Seuls les fichier JPG, JPEG, PNG et WEBP sont acceptés'
+      if (!photo.value) {
+        erreurs.photo = 'La photo du jeu est requis'
+      } else {
+        const nomFichier = photo.value.name
+        const extension = nomFichier.split('.').pop().toUpperCase()
+        const extensionPermis = ['JPG', 'JPEG', 'PNG', 'WEBP']
+        if (!extensionPermis.includes(extension))
+          erreurs.photo = 'Seuls les fichier JPG, JPEG, PNG et WEBP sont acceptés'
+      }
       if (!choixPaiement.value)
         erreurs.choixPaiement = 'Veuillez choisir la méthode de paiement désirée'
       if (!choixLivraison.value)
@@ -167,23 +172,27 @@ export default {
       if (Object.keys(erreurs).length > 0) return
 
       try {
+        const formData = new FormData()
+        formData.append('nomJeu', nomJeu.value)
+        formData.append('prix', prix.value)
+        formData.append('photo', photo.value) // <-- fichier
+        formData.append('choixPaiement', choixPaiement.value)
+        formData.append('choixLivraison', choixLivraison.value)
+        formData.append('adresse', adresse.value)
+        formData.append('vendeurId', auth.userId)
+
         const reponse = await fetch('http://localhost:5000/vendre', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            nomJeu: nomJeu.value,
-            prix: prix.value,
-            photo: photo.value,
-            choixPaiement: choixPaiement.value,
-            choixLivraison: choixLivraison.value,
-            adresse: adresse.value,
-          }),
+          body: formData,
         })
 
         const data = await reponse.json()
 
         if (reponse.ok) {
-          router.push('/')
+          router.push({
+            path: '/',
+            state: { success: 'Jeu mis en vente avec succès' },
+          })
         } else {
           Object.assign(erreurs, data.erreurs)
         }

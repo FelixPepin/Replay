@@ -1,36 +1,42 @@
 from flask import Flask, render_template, request, redirect, make_response, url_for, Blueprint, session, flash, abort, jsonify, current_app
 import mysql.connector
 import bd
+import os
 import re
 from flask.logging import create_logger
 import datetime
 
-bp_auth = Blueprint('vente',__name__)
+bp_vente = Blueprint('vente',__name__)
 
-@bp_auth.route("/vente", methods=['POST'])
+@bp_vente.route("/vendre", methods=['POST'])
 def register():
-    data = request.get_json()
+    nomJeu = (request.form.get("nomJeu","")).strip()
+    prix = request.form.get("prix","")
+    
+    choixPaiement = request.form.get("choixPaiement","")
+    choixLivraison = request.form.get("choixLivraison","")
+    adresse = request.form.get("adresse","")
+    vendeurId = request.form.get("vendeurId","")
+    photo = request.files.get("photo","")
+    nomFichier = photo.filename
 
-    nomJeu = data.get("nomJeu", "").strip()
-    prix = data.get("prix", "").strip()
-    photo = data.get("photo", "")
-    choixPaiement = data.get("choixPaiement", "")
-    choixLivraison = data.get("choixLivraison", "")
-    adresse = data.get("adresse", "")
+    chemin_complet = os.path.join(current_app.config['CHEMIN_VERS_AJOUTS'], nomFichier)
+    photo.save(chemin_complet)
 
     try:
         with bd.creer_connexion() as conn:
             with conn.get_curseur() as curseur:
                 curseur.execute(
                     'INSERT INTO ventes (NomJeu, Prix, Photo, TypePaiement, TypeLivraison, Adresse, VendeurId) VALUES (%(NomJeu)s, %(Prix)s,'
-                    ' %(Photo)s, %(Paiement)s, %(Livraison)s, %(adresse)s)',
+                    ' %(Photo)s, %(Paiement)s, %(Livraison)s, %(Adresse)s, %(VendeurId)s)',
                     {
                         'NomJeu' : nomJeu,
                         'Prix' : prix,
-                        'Photo' : photo,
-                        'TypePaiement' : choixPaiement,
-                        'TypeLivraison' : choixLivraison,
-                        'Adresse' : adresse
+                        'Photo' : nomFichier,
+                        'Paiement' : choixPaiement,
+                        'Livraison' : choixLivraison,
+                        'Adresse' : adresse,
+                        'VendeurId': vendeurId
                     }
                 )
 
@@ -41,47 +47,3 @@ def register():
     except mysql.connector.Error as error:
         current_app.logger.exception(error)
         return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500
-
-
-@bp_auth.route("/login",methods=['POST','GET'])
-def login():
-    """Permet la connexion d'un compte utilisateur valide"""
-    
-    data = request.get_json()
-    
-    email = data.get("email","").strip()
-    password = data.get("password", "")
-    
-    try:
-        with bd.creer_connexion() as conn:
-            with conn.get_curseur() as curseur:
-                curseur.execute('SELECT Id, NomUtilisateur, MotDePasse, Courriel FROM utilisateurs WHERE courriel = %(courriel)s',
-                    {
-                            'courriel' : email
-                    }
-                                    
-                )
-                utilisateur = curseur.fetchone()
-    except mysql.connector.Error as err:
-            abort(500)
-            
-    if (utilisateur):
-        userBytes = password.encode('utf-8')
-        hash = utilisateur['MotDePasse'].encode('utf-8')
-        result  = bcrypt.checkpw(userBytes,hash)
-        
-        if (result):
-            token = jwt.encode({
-                'utilisateur_id': utilisateur['Id'],
-                'courriel': utilisateur['Courriel'],
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)
-            }, current_app.secret_key, algorithm='HS256')
-            # current_app.logger.info(f"CONNEXION D'UN COMPTE : Utilisateur ID : {curseur.lastrowid} {email}")
-            # return jsonify({"succes": True}), 201
-            return jsonify({"token": token}), 200
-        return jsonify({"erreurs": {"general": "Courriel ou mot de passe invalide"}}), 401
-
-
-    
-    
-    
