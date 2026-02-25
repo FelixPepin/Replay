@@ -49,7 +49,7 @@
                     name="choixPaiement"
                     id="choixPaiementEnLigne"
                     v-model="choixPaiement"
-                    value="enLigne"
+                    value="En ligne"
                   />
                   <label class="form-check-label" for="choixPaiementEnLigne"
                     >Paiement en ligne</label
@@ -62,7 +62,7 @@
                     name="choixPaiement"
                     id="choixPaiementEnMainPropre"
                     v-model="choixPaiement"
-                    value="mainPropre"
+                    value="En main propre"
                   />
                   <label class="form-check-label" for="choixPaiementEnMainPropre"
                     >Paiement en main propre</label
@@ -79,7 +79,7 @@
                     type="radio"
                     name="choixLivraison"
                     id="choixLivraisonPoste"
-                    value="parPoste"
+                    value="Par la poste"
                     v-model="choixLivraison"
                   />
                   <label class="form-check-label" for="choixLivraisonPoste"
@@ -92,7 +92,7 @@
                     type="radio"
                     name="choixLivraison"
                     id="choixLivraisonEnMainPropre"
-                    value="mainPropre"
+                    value="En main propre"
                     v-model="choixLivraison"
                   />
                   <label class="form-check-label" for="choixLivraisonEnMainPropre"

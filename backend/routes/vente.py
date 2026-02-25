@@ -9,7 +9,7 @@ import datetime
 bp_vente = Blueprint('vente',__name__)
 
 @bp_vente.route("/vendre", methods=['POST'])
-def register():
+def vendre():
     nomJeu = (request.form.get("nomJeu","")).strip()
     prix = request.form.get("prix","")
     
@@ -47,3 +47,22 @@ def register():
     except mysql.connector.Error as error:
         current_app.logger.exception(error)
         return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500
+    
+@bp_vente.route("/mesVentes/<int:id_utilisateur>", methods=['GET'])
+def mesVentes(id_utilisateur):
+    ventes = []
+
+    try:
+        with bd.creer_connexion() as conn:
+            with conn.get_curseur() as curseur:
+                curseur.execute("SELECT v.Id as Id, v.NomJeu, v.Prix, v.Photo, v.TypePaiement, v.TypeLivraison, v.Adresse, u.NomUtilisateur" \
+                " FROM ventes v JOIN utilisateurs u ON v.VendeurId = u.Id WHERE u.Id = %(idUtilisateur)s",
+                {
+                    'idUtilisateur' : id_utilisateur
+                })
+                ventes = curseur.fetchall()
+    except mysql.connector.Error as err:
+        print(err)
+        return jsonify({"erreurs": {"serveur": str(err)}}), 500
+        abort(500)
+    return jsonify(ventes)
