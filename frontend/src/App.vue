@@ -9,7 +9,6 @@ import { RouterLink, RouterView } from 'vue-router'
         <RouterLink to="/register" class="=btn btn-primary">Inscription</RouterLink>
       </nav>
   </header>
-
   <RouterView />
 </template>
 
