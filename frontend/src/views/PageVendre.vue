@@ -11,7 +11,8 @@
                         </ul>
                     </div>
 
-                    <form @submit.prevent="mettreEnVente" method="post" enctype="multipart/form-data" novalidate>
+                    <form @submit.prevent="mettreEnVente" method="post" enctype="multipart/form-data" novalidate 
+                    action="http://localhost:5000/vendre">
                         <div class="mb-3">
                             <label for="nomJeu" class="form-label fw-bold">Nom du jeu</label>
                             <input v-model="nomJeu" type="text" id="nomJeu" name="nomJeu" class="form-control" />
@@ -23,7 +24,7 @@
 
                         <div class="mb-3">
                             <label for="photo" class="form-label fw-bold">Photo du jeu</label>
-                            <input v-model="photo" type="file" name="photo" id="photo" class="form-control" />
+                            <input type="file" name="photo" id="photo" class="form-control" @change="changementPhoto"/>
                         </div>
                         <div class="mb-3">
                             <fieldset>
@@ -70,52 +71,68 @@
 <script>
 import { ref, reactive } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
-const router = useRouter()
+export default {
+    setup(){
+        const router = useRouter()
 
-const nomJeu = ref('')
-const prix = ref('')
-const photo = ref('')
-const choixPaiement = ref('')
-const choixLivraison = ref('')
-const adresse = ref('')
-const erreurs = reactive({})
+        const nomJeu = ref('')
+        const prix = ref('')
+        const photo = ref(null)
+        const choixPaiement = ref('')
+        const choixLivraison = ref('')
+        const adresse = ref('')
+        const erreurs = reactive({})
 
-async function mettreEnVente() {
-    console.log("AppelleMettreEnVente")
-    Object.keys(erreurs).forEach(k => delete erreurs[k])
+        async function mettreEnVente() {
+            console.log("AppelleMettreEnVente")
+            Object.keys(erreurs).forEach(k => delete erreurs[k])
 
-    if (!nomJeu.value.trim()) erreurs.nomJeu = "Le nom du jeu est requis"
-    if (!prix.value) erreurs.prix = "Le prix du jeu est requis"
-    if (prix.value > 60) erreurs.prix = "Un jeu en revente ne peut pas valoir plus de 60$"
-    if (!photo.value.trim()) erreurs.photo = "La photo du jeu est requis"
-    if (!choixPaiement.value) erreurs.choixPaiement = "Veuillez choisir la méthode de paiement désirée"
-    if (!choixLivraison.value) erreurs.choixLivraison = "Veuillez choisir la méthode de livraison désirée"
-    if (!adresse.value && choixLivraison.value==="mainPropre") erreurs.adresse = "L'adresse est requise lorsque la méthode de livraison est en main propre."
+            if (!nomJeu.value.trim()) erreurs.nomJeu = "Le nom du jeu est requis"
+            if (nomJeu.value.trim().length < 3 || nomJeu.value.trim().length > 20) erreurs.nomJeu = "Le nom du jeu doit être entre 3 et 20 caractères"
+            if (!prix.value) erreurs.prix = "Le prix du jeu est requis"
+            if (prix.value > 60) erreurs.prix = "Un jeu en revente ne peut pas valoir plus de 60$"
+            if (!photo.value) erreurs.photo = "La photo du jeu est requis"
+            if (!choixPaiement.value) erreurs.choixPaiement = "Veuillez choisir la méthode de paiement désirée"
+            if (!choixLivraison.value) erreurs.choixLivraison = "Veuillez choisir la méthode de livraison désirée"
+            if (!adresse.value && choixLivraison.value==="mainPropre") erreurs.adresse = "L'adresse est requise lorsque la méthode de livraison est en main propre."
 
 
-    if (Object.keys(erreurs).length > 0) return
+            if (Object.keys(erreurs).length > 0) return
 
-    try {
-        const reponse = await fetch('http://localhost:5000/register', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                username: username.value,
-                email: email.value,
-                password: password.value,
-                confirm: confirm.value
-            })
-        })
+            try {
+                const reponse = await fetch('http://localhost:5000/vendre', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        nomJeu: nomJeu.value,
+                        prix: prix.value,
+                        photo: photo.value,
+                        choixPaiement: choixPaiement.value,
+                        choixLivraison: choixLivraison.value,
+                        adresse : adresse.value
+                    })
+                })
 
-        const data = await reponse.json()
+                const data = await reponse.json()
 
-        if (reponse.ok) {
-            router.push('/')
-        } else {
-            Object.assign(erreurs, data.erreurs)
+                if (reponse.ok) {
+                    router.push('/')
+                } else {
+                    Object.assign(erreurs, data.erreurs)
+                }
+            } catch (e) {
+                erreurs.serveur = "Impossible de contacter le serveur"
+            }
         }
-    } catch (e) {
-        erreurs.serveur = "Impossible de contacter le serveur"
+        function changementPhoto(e){
+            photo.value = e.target.files[0] || null
+        }
+            return {
+                nomJeu, prix, photo,
+                choixPaiement, choixLivraison, adresse,
+                erreurs,
+                mettreEnVente, changementPhoto
+                }
     }
 }
 
