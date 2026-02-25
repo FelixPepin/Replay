@@ -87,8 +87,8 @@ export default {
             console.log("AppelleMettreEnVente")
             Object.keys(erreurs).forEach(k => delete erreurs[k])
 
-            if (!nomJeu.value.trim()) erreurs.nomJeu = "Le nom du jeu est requis"
             if (nomJeu.value.trim().length < 3 || nomJeu.value.trim().length > 20) erreurs.nomJeu = "Le nom du jeu doit être entre 3 et 20 caractères"
+            if (!nomJeu.value.trim()) erreurs.nomJeu = "Le nom du jeu est requis"
             if (!prix.value) erreurs.prix = "Le prix du jeu est requis"
             if (prix.value > 60) erreurs.prix = "Un jeu en revente ne peut pas valoir plus de 60$"
             if (!photo.value) erreurs.photo = "La photo du jeu est requis"
