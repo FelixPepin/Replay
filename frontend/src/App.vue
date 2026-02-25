@@ -1,77 +1,27 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { ref , computed} from 'vue';
+import { RouterLink, RouterView, useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+const auth = useAuthStore()
+const router = useRouter()
+const estConnecte = computed(() => !!localStorage.getItem('token'))
+
+
+function deconnecter() {
+  auth.deconnecter()
+    router.push('/login')
+}
 </script>
 
 <template>
   <header>
-      <nav>
-        <RouterLink to="/vendre" class="btn btn-primary p-2 text-black">Vendre un jeu</RouterLink>
-        <RouterLink to="/register" class="=btn btn-primary">Inscription</RouterLink>
+      <nav class="navbar navbar-expand">
+        <RouterLink to="/vendre" class="btn btn-primary p-2 text-black m-2">Vendre un jeu</RouterLink>
+        <RouterLink to="/register" class="btn btn-primary p-2 text-black m-2">Inscription</RouterLink>
+        <button v-show="auth.estConnecte" id="deconnexion" @click="deconnecter" class="btn btn-info p-2 text-black m-2">Se déconnecter</button>
       </nav>
   </header>
   <RouterView />
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
-</style>
