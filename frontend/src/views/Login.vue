@@ -35,6 +35,8 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+const auth = useAuthStore()
 
 const router = useRouter()
 
@@ -61,6 +63,7 @@ async function soumettre() {
         const data = await reponse.json()
 
         if(reponse.ok){
+            auth.connecter(data.token)
             router.push('/')
         } else{
             Object.assign(erreurs,data.erreurs)

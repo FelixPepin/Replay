@@ -5,8 +5,8 @@
                 <h1 class="mb-4">Créer un compte</h1>
 
                 <div v-if="Object.keys(erreurs).length" class="alert alert-danger">
-                    <ul class="mb-0">
-                        <li v-for="(msg, champ) in erreurs" :key="champ">{{ msg }}</li>
+                    <ul class="mb-0 list-unstyled">
+                        <li v-for="(msg, champ) in erreurs" :key="champ">- {{ msg }}</li>
                     </ul>
                 </div>
 
@@ -54,14 +54,19 @@ const email = ref('')
 const password = ref('')
 const confirm = ref('')
 const erreurs = reactive({})
+let regexCourriel = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
+let regexMdp = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/
+
+
 
 async function soumettre() {
-    console.log("Soummetre called")
     Object.keys(erreurs).forEach(k => delete erreurs[k])
 
     if (!username.value.trim()) erreurs.username = "Le nom d'utilisateur est requis"
     if (!email.value.trim()) erreurs.email = "L'adresse courriel est requise"
+    else if (!regexCourriel.test(email.value)) erreurs.email = "L'adresse courriel doit avoir le format suivant (exemple@exemple.com)"
     if (!password.value) erreurs.password = "Le mot de passe est requis"
+    else if (!regexMdp.test(password.value)) erreurs.password = "Le mot de passe doit contenir huit caractères, au moins une minuscule, majuscule, un chiffre et un caractère spécial"
     if (password.value !== confirm.value) erreurs.confirm = "Les deux mots de passe doivent correspondre"
 
     if (Object.keys(erreurs).length > 0) return
@@ -81,6 +86,7 @@ async function soumettre() {
         const data = await reponse.json()
 
         if (reponse.ok) {
+            localStorage.setItem('token', data.token)
             router.push('/')
         } else {
             Object.assign(erreurs, data.erreurs)
