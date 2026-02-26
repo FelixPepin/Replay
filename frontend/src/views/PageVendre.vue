@@ -191,7 +191,7 @@ export default {
         if (reponse.ok) {
           router.push({
             path: '/',
-            state: { success: 'Jeu mis en vente avec succès' },
+            query: { success: 'Jeu mis en vente avec succès' },
           })
         } else {
           Object.assign(erreurs, data.erreurs)
