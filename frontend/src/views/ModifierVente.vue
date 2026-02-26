@@ -2,7 +2,7 @@
     <main>
         <div class="container mt-2">
             <div class="row">
-                <div v-if="auth.userId === vendeurId " class="col-mb-3">
+                <div v-if="auth.userId === vendeurId" class="col-mb-3">
                     <h1 class="mb-4">Mettre un jeu en vente</h1>
                     <div v-if="Object.keys(erreurs).length" class="alert alert-danger">
                         <ul class="mb-0">
@@ -58,9 +58,7 @@
                     </form>
                 </div>
                 <div v-else>
-                    <p class="alert alert-warning">
-                        Vous devez être le vendeur pour modifier ce jeu.
-                    </p>
+                    <p class="alert alert-warning">Vous devez être le vendeur pour modifier ce jeu.</p>
                 </div>
             </div>
         </div>
@@ -86,28 +84,26 @@ const adresse = ref('')
 const erreurs = reactive({})
 const vendeurId = ref('')
 
-
 onMounted(async () => {
-  try {
-    const res = await fetch(`http://localhost:5000/vente/${idVente}`)
-    const data = await res.json()
-    if (res.ok) {
-        prix.value = data.Prix
-        choixLivraison.value = data.TypeLivraison
-        choixPaiement.value = data.TypePaiement
-        adresse.value = data.Adresse ?? ""
-        photo.value = data.Photo
-        nomJeu.value = data.NomJeu
-        vendeurId.value = data.VendeurId
-    } else {
-      erreurs.value = data?.erreurs?.serveur ?? 'Erreur lors du chargement'
+    try {
+        const res = await fetch(`http://localhost:5000/vente/${idVente}`)
+        const data = await res.json()
+        if (res.ok) {
+            prix.value = data.Prix
+            choixLivraison.value = data.TypeLivraison
+            choixPaiement.value = data.TypePaiement
+            adresse.value = data.Adresse ?? ''
+            photo.value = data.Photo
+            nomJeu.value = data.NomJeu
+            vendeurId.value = data.VendeurId
+        } else {
+            erreurs.value = data?.erreurs?.serveur ?? 'Erreur lors du chargement'
+        }
+    } catch (e) {
+        erreurs.value = data?.erreurs?.serveur ?? 'Erreur lors du chargement'
+        return
     }
-  } catch (e) {
-    erreurs.value = data?.erreurs?.serveur ?? 'Erreur lors du chargement'
-    return
-  }
 })
-
 
 async function modifierVente() {
     console.log('AppelleModifierEnVente')

@@ -107,3 +107,14 @@ def modifier(idVente):
     except mysql.connector.Error as error:
         current_app.logger.exception(error)
         return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500
+    
+@bp_vente.route("/supprimer/<int:idVente>", methods=['POST'])
+def supprimer(idVente):
+    try:
+        with bd.creer_connexion() as conn:
+            with conn.get_curseur() as curseur:
+                curseur.execute('DELETE FROM ventes WHERE Id = %(idVente)s', {'idVente' : idVente})
+        return jsonify({"succes": True}), 200
+    except mysql.connector.Error as err:
+        current_app.logger.exception(err)
+        return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500
