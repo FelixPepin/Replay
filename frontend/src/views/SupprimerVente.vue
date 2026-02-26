@@ -1,11 +1,8 @@
 <template>
     <main>
-        <div class="container mt-2">
-            <div class="row">
-                <p>auth: {{ auth.userId }} ({{ typeof auth.userId }})</p>
-<p>vendeur: {{ vendeurId }} ({{ typeof vendeurId }})</p>
-                <div v-if="auth.userId === vendeurId" class="col-mb-3">
-                    <h1 class="mb-4">Mettre un jeu en vente</h1>
+        <div class="container mt-2 row justify-content-center">
+                <div class="w-50">
+                    <h1 class="mb-4 text-center">Supprimer un jeu en vente</h1>
                     <div class="card mb-4 shadow-sm">
                         <img class="card-img-top w-100" :src="`http://localhost:5000/static/images/ajouts/${photo}`" />
                         <div class="card-body">
@@ -14,19 +11,14 @@
                             <p class="card-text">Livraison : {{ choixLivraison }}</p>
                             <p class="card-text">Paiement : {{ choixPaiement }}</p>
                             <p v-if="adresse" !="" class="card-text">Adresse : {{ adresse }}</p>
-                            <RouterLink :to="`/modifier/${vente.Id}`" class="btn btn-warning p-2 text-black ms-5">
-                                Modifier</RouterLink>
-                            <RouterLink :to="`/supprimer/${vente.Id}`" class="btn btn-danger p-2 text-black ms-5">
-                                Supprimer</RouterLink>
                         </div>
                     </div>
                     <form @submit.prevent="supprimerVente" method="post" enctype="multipart/form-data" novalidate>
                         <button type="submit" class="btn btn-primary w-100">Supprimer le jeu</button>
                     </form>
-                </div>
-                <div v-else>
+                <!-- <div v-else>
                     <p class="alert alert-warning">Vous devez être le vendeur pour supprimer ce jeu.</p>
-                </div>
+                </div> -->
             </div>
         </div>
     </main>
