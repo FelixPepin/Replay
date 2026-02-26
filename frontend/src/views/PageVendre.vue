@@ -101,7 +101,7 @@
                 </div>
               </fieldset>
             </div>
-            <div class="mb-3" v-if="choixLivraison === 'mainPropre'">
+            <div class="mb-3" v-if="choixLivraison === 'En main propre'">
               <label for="adresse" class="form-label fw-bold">Adresse</label>
               <input
                 v-model="adresse"

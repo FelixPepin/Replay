@@ -4,6 +4,7 @@ import Register from '../views/Register.vue'
 import Login from '@/views/Login.vue'
 import PageAchat from '@/views/PageAchat.vue'
 import MesVentes from '@/views/MesVentes.vue'
+import ModifierVente from '@/views/ModifierVente.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,6 +33,11 @@ const router = createRouter({
       path: '/mesVentes',
       name: 'mesVentes',
       component: MesVentes
+    },
+    {
+      path: "/modifier/:id",
+      name: "modifierVente",
+      component: ModifierVente
     }
   ],
 })

@@ -8,6 +8,7 @@ import datetime
 
 bp_vente = Blueprint('vente',__name__)
 
+# Permet de mettre en vente un jeu vidéo
 @bp_vente.route("/vendre", methods=['POST'])
 def vendre():
     nomJeu = (request.form.get("nomJeu","")).strip()
@@ -39,15 +40,13 @@ def vendre():
                         'VendeurId': vendeurId
                     }
                 )
-
-                current_app.logger.info(f"CRÉATION D'UNE VENTE POUR LE JEU SUIVANT : {curseur.lastrowid} {nomJeu}")
-
         return jsonify({"succes": True}), 201
 
     except mysql.connector.Error as error:
         current_app.logger.exception(error)
         return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500
-    
+
+# Permet de récuperer tous les ventens d'un utilisateur
 @bp_vente.route("/mesVentes/<int:id_utilisateur>", methods=['GET'])
 def mesVentes(id_utilisateur):
     ventes = []
@@ -63,6 +62,48 @@ def mesVentes(id_utilisateur):
                 ventes = curseur.fetchall()
     except mysql.connector.Error as err:
         print(err)
-        return jsonify({"erreurs": {"serveur": str(err)}}), 500
         abort(500)
     return jsonify(ventes)
+# Permet de sélectionner une vente précise
+@bp_vente.route("/vente/<int:id_vente>", methods=['GET'])
+def vente(id_vente):
+    vente = None
+
+    try:
+        with bd.creer_connexion() as conn:
+            with conn.get_curseur() as curseur:
+                curseur.execute("SELECT NomJeu, Prix, Photo, TypePaiement, TypeLivraison, Adresse, VendeurId FROM ventes" \
+                " WHERE Id = %(idVente)s",
+                {
+                    'idVente' : id_vente
+                })
+                vente = curseur.fetchone()
+    except mysql.connector.Error as err:
+        print(err)
+        abort(500)
+    return jsonify(vente)
+
+@bp_vente.route("/modifier/<int:idVente>", methods=['POST'])
+def modifier(idVente):
+    prix = request.form.get("prix","")
+    choixPaiement = request.form.get("choixPaiement","")
+    choixLivraison = request.form.get("choixLivraison","")
+    adresse = request.form.get("adresse","")
+
+    try:
+        with bd.creer_connexion() as conn:
+            with conn.get_curseur() as curseur:
+                curseur.execute("UPDATE ventes SET Prix = %(prix)s, TypePaiement = %(choixPaiement)s, TypeLivraison = %(choixLivraison)s" \
+                ", Adresse = %(adresse)s WHERE Id = %(idVente)s",
+                {
+                    'prix' : prix,
+                    'choixPaiement': choixPaiement,
+                    'choixLivraison': choixLivraison,
+                    'adresse': adresse,
+                    'idVente': idVente
+                })
+            return jsonify({"succes": True}), 200
+
+    except mysql.connector.Error as error:
+        current_app.logger.exception(error)
+        return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500
