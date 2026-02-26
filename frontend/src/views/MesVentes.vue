@@ -18,10 +18,10 @@
               <p class="card-text">Vendeur : {{ vente.NomUtilisateur }}</p>
               <p class="card-text">Livraison : {{ vente.TypeLivraison }}</p>
               <p class="card-text">Paiement : {{ vente.TypePaiement }}</p>
-              <RouterLink :to="`/modifier/${vente.id}`" class="btn btn-primary p-2 text-black ms-5"
+              <RouterLink :to="`/modifier/${vente.Id}`" class="btn btn-primary p-2 text-black ms-5"
                 >Modifier</RouterLink
               >
-              <RouterLink :to="`/supprimer/${vente.id}`" class="btn btn-primary p-2 text-black ms-5"
+              <RouterLink :to="`/supprimer/${vente.Id}`" class="btn btn-primary p-2 text-black ms-5"
                 >Supprimer</RouterLink
               >
             </div>
