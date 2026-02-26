@@ -4,6 +4,9 @@ import Register from '../views/Register.vue'
 import Login from '@/views/Login.vue'
 import PageAchat from '@/views/PageAchat.vue'
 import HomeView from '../views/HomeView.vue'
+import MesVentes from '@/views/MesVentes.vue'
+import ModifierVente from '@/views/ModifierVente.vue'
+import SupprimerVente from '@/views/SupprimerVente.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
