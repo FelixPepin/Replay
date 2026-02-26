@@ -4,7 +4,7 @@ import { ref } from 'vue'
 const carouselItems = ref([
   { id: 1, img: 'jeux1.jpg', alt: 'Jeux action' },
   { id: 2, img: 'jeux2.jpg', alt: 'Jeux aventure' },
-  { id: 3, img: 'jeux3.jpg', alt: 'Jeux rétro' }
+  { id: 3, img: 'jeux3.jpg', alt: 'Jeux rétro' },
 ])
 
 const getImageUrl = (name) => {
@@ -17,24 +17,27 @@ const getImageUrl = (name) => {
     <section class="hero-section d-flex align-items-center">
       <div class="container">
         <div class="row align-items-center">
-
           <div class="col-lg-6 text-white py-5">
             <h1 class="display-3 fw-bold mb-3">
               Rejoue mieux avec <span class="text-warning">RePlay</span>.
             </h1>
             <p class="lead mb-4">
               Donnez une seconde vie aux jeux usagés. La plateforme hybride pour
-              <strong>acheter, vendre et louer</strong> vos titres préférés,
-              même avec un petit budget.
+              <strong>acheter, vendre et louer</strong> vos titres préférés, même avec un petit
+              budget.
             </p>
 
             <div class="d-flex flex-wrap gap-3">
-              <RouterLink to="/achat"
-                class="btn btn-warning btn-lg px-4 fw-bold shadow text-decoration-none d-flex align-items-center">
+              <RouterLink
+                to="/achat"
+                class="btn btn-warning btn-lg px-4 fw-bold shadow text-decoration-none d-flex align-items-center"
+              >
                 🛒 Acheter
               </RouterLink>
-              <RouterLink to="/vendre"
-                class="btn btn-outline-light btn-lg px-4 text-decoration-none d-flex align-items-center">
+              <RouterLink
+                to="/vendre"
+                class="btn btn-outline-light btn-lg px-4 text-decoration-none d-flex align-items-center"
+              >
                 💰 Vendre
               </RouterLink>
             </div>
@@ -46,22 +49,42 @@ const getImageUrl = (name) => {
           </div>
 
           <div class="col-lg-6 d-none d-lg-block">
-            <div id="heroCarousel" class="carousel slide shadow-lg rounded-4 overflow-hidden" data-bs-ride="carousel">
+            <div
+              id="heroCarousel"
+              class="carousel slide shadow-lg rounded-4 overflow-hidden"
+              data-bs-ride="carousel"
+            >
               <div class="carousel-inner">
-                <div v-for="(item, index) in carouselItems" :key="item.id"
-                  :class="['carousel-item', { active: index === 0 }]">
-                  <img :src="getImageUrl(item.img)" class="d-block w-100 hero-img" :alt="item.alt">
+                <div
+                  v-for="(item, index) in carouselItems"
+                  :key="item.id"
+                  :class="['carousel-item', { active: index === 0 }]"
+                >
+                  <img
+                    :src="getImageUrl(item.img)"
+                    class="d-block w-100 hero-img"
+                    :alt="item.alt"
+                  />
                 </div>
               </div>
-              <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+              <button
+                class="carousel-control-prev"
+                type="button"
+                data-bs-target="#heroCarousel"
+                data-bs-slide="prev"
+              >
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
               </button>
-              <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+              <button
+                class="carousel-control-next"
+                type="button"
+                data-bs-target="#heroCarousel"
+                data-bs-slide="next"
+              >
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
               </button>
             </div>
           </div>
-
         </div>
       </div>
     </section>
@@ -83,7 +106,8 @@ const getImageUrl = (name) => {
               <div class="fs-1 mb-2">🔄</div>
               <h5 class="fw-bold text-dark">Location Hybride</h5>
               <p class="text-dark opacity-75 small">
-                Rentabilisez votre collection ou jouez à petit prix grâce à notre système de location.
+                Rentabilisez votre collection ou jouez à petit prix grâce à notre système de
+                location.
               </p>
             </div>
           </div>
