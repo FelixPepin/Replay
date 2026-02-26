@@ -1,5 +1,5 @@
 
-
+import os
 import types
 import contextlib
 import mysql.connector
@@ -9,10 +9,10 @@ from contextlib import contextmanager
 @contextlib.contextmanager
 def creer_connexion():
     conn = mysql.connector.connect(
-        user="garneau",
-        password="qwerty_123",
-        host="127.0.0.1",
-        database="replay",
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        host=os.getenv("DB_HOST"),
+        database=os.getenv("DB_NAME"),
         raise_on_warnings=True
     )
 

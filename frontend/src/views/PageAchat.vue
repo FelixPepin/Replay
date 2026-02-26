@@ -1,25 +1,25 @@
 <template>
-    <div class="container mt-5">
-        <h1>Liste de jeux en vente</h1>
-    </div>
+    <main class="container">
+        <div class="container mt-5">
+            <h1>Liste de jeux en vente</h1>
+        </div>
 
-    <div class="row">
-        <div v-for="jeu in jeux" :key="jeu.id" class="col-lg-6 mb-3">
-            <div class="card h-100">
-                <div class="card-body">
-                    <h2 class="card-title h5">{{ jeu.nom }}</h2>
-                    <p class="card-text text-primary fw-bold">
-                        {{ jeu.prix }} $
-                    </p>
-                    <button class="btn btn-sm btn-success me-2">Ajouter au panier</button>
-                    <button class="btn btn-sm btn-success">Détails</button>
-                    
+        <div class="row">
+            <div v-for="jeu in jeux" :key="jeu.id" class="col-lg-6 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h2 class="card-title h5">{{ jeu.nom }}</h2>
+                        <p class="card-text text-primary fw-bold">
+                            {{ jeu.prix }} $
+                        </p>
+                        <button class="btn btn-sm btn-success me-2">Ajouter au panier</button>
+                        <button class="btn btn-sm btn-success">Détails</button>
+
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-
-
+    </main>
 </template>
 <script setup>
 import { ref } from 'vue';
