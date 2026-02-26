@@ -3,7 +3,7 @@
 import types
 import contextlib
 import mysql.connector
-
+from contextlib import contextmanager
 
 # Connexion à la bd
 @contextlib.contextmanager
@@ -28,9 +28,8 @@ def creer_connexion():
     finally:
         conn.close()
 
-
 @contextlib.contextmanager
-def get_curseur(self):
+def get_curseur(self, **kwargs):
     curseur = self.cursor(dictionary=True, buffered=True)
     try:
         yield curseur
