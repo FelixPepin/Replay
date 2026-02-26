@@ -46,9 +46,6 @@ function deconnecter() {
         </div>
       </div>
     </nav>
-    <div v-if="message" class="alert alert-success">
-      {{ message }}
-    </div>
   </header>
 
   <RouterView />
