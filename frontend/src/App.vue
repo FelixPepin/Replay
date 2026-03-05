@@ -25,6 +25,7 @@ function deconnecter() {
         <div class="d-flex align-items-center">
           <RouterLink to="/achat" class="nav-link text-white me-3">Acheter</RouterLink>
           <RouterLink to="/vendre" class="nav-link text-white me-3">Vendre</RouterLink>
+          <RouterLink to="/location" class="nav-link text-white me-3">Location</RouterLink>
           <RouterLink v-if="auth.estConnecte" to="/mesVentes" class="nav-link text-white me-3">
             Mes Ventes
           </RouterLink>
