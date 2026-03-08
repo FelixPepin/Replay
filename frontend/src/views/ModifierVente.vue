@@ -54,7 +54,7 @@
                             <label for="adresse" class="form-label fw-bold">Adresse</label>
                             <input v-model="adresse" type="text" id="adresse" name="adresse" class="form-control" />
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">Vendre le jeu</button>
+                        <button type="submit" class="btn btn-primary w-100">Modifier le jeu</button>
                     </form>
                 </div>
                 <div v-else>
@@ -69,7 +69,9 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useNotifStore } from '@/stores/notif'
 const auth = useAuthStore()
+const notif = useNotifStore()
 const router = useRouter()
 const route = useRoute()
 
@@ -136,10 +138,8 @@ async function modifierVente() {
         const data = await reponse.json()
 
         if (reponse.ok) {
-            router.push({
-                path: '/',
-                state: { success: 'Vente modifier avec succès' },
-            })
+            notif.setNotif('Vente modifiée avec succès')
+            router.push('/mesVentes')
         } else {
             Object.assign(erreurs, data.erreurs)
         }
