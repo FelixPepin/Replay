@@ -25,17 +25,17 @@ function deconnecter() {
         <div class="d-flex align-items-center">
           <RouterLink to="/achat" class="nav-link text-white me-3">Acheter</RouterLink>
           <RouterLink v-if="auth.estConnecte" to="/vendre" class="nav-link text-white me-3"
-            >Vendre</RouterLink
+            >Mettre en Vendre</RouterLink
           >
-          <RouterLink v-if="auth.estConnecte" to="/mesVentes" class="nav-link text-white me-3">
-            Mes Ventes
-          </RouterLink>
           <RouterLink
             v-if="auth.estConnecte"
             to="/mettreEnLocation"
             class="nav-link text-white me-3"
             >Mettre en location</RouterLink
           >
+          <RouterLink v-if="auth.estConnecte" to="/mesVentes" class="nav-link text-white me-3">
+            Mes Ventes
+          </RouterLink>
           <div class="ms-2 d-flex gap-2">
             <RouterLink
               v-if="!auth.estConnecte"

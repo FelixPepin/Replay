@@ -7,7 +7,7 @@ import HomeView from '../views/HomeView.vue'
 import MesVentes from '@/views/MesVentes.vue'
 import ModifierVente from '@/views/ModifierVente.vue'
 import SupprimerVente from '@/views/SupprimerVente.vue'
-import PageLocation from '@/views/PageLocation.vue'
+import PageLocation from '@/views/PageMettreEnLocation.vue'
 import PageMettreEnLocation from '@/views/PageMettreEnLocation.vue'
 
 const router = createRouter({

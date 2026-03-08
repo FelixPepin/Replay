@@ -25,6 +25,22 @@
               <label for="prix" class="form-label fw-bold">Prix</label>
               <input v-model="prix" type="number" id="prix" name="prix" class="form-control" />
             </div>
+            <div class="mb-3">
+              <label for="typeConsole" class="form-label fw-bold">Type de console</label>
+              <select v-model="typeConsole" id="typeConsole" name="typeConsole" class="form-select">
+                <option value="">-- Sélectionner --</option>
+                <option value="PS5">PS5</option>
+                <option value="PS4">PS4</option>
+                <option value="PS3">PS3</option>
+                <option value="Xbox Series X">Xbox Series X</option>
+                <option value="Xbox One">Xbox One</option>
+                <option value="Xbox 360">Xbox 360</option>
+                <option value="Nintendo Switch 2">Nintendo Switch 2</option>
+                <option value="Nintendo Switch">Nintendo Switch</option>
+                <option value="Wii U">Wii U</option>
+                <option value="Wii">Wii</option>
+              </select>
+            </div>
 
             <div class="mb-3">
               <label for="photo" class="form-label fw-bold">Photo du jeu</label>
@@ -85,10 +101,10 @@
               <input type="date" class="form-control" id="dateDebut" v-model="dateDebut"/>
             </div>
             <div class="mb-3">
-              <label for="dateFin" class="form-label fw-bold">Date de début</label>
+              <label for="dateFin" class="form-label fw-bold">Date de fin</label>
               <input type="date" class="form-control" id="dateFin" v-model="dateFin"/>
             </div>
-            <button type="submit" class="btn btn-primary w-100">Vendre le jeu</button>
+            <button type="submit" class="btn btn-primary w-100">Mettre en location</button>
           </form>
         </div>
         <div v-else>
@@ -106,23 +122,25 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useNotifStore } from '@/stores/notif'
 export default {
   setup() {
     const auth = useAuthStore()
+    const notif = useNotifStore()
     const router = useRouter()
 
     const vuePhoto = ref(null)
     const nomJeu = ref('')
     const prix = ref('')
     const photo = ref(null)
+    const typeConsole = ref('')
     const choixPaiement = ref('')
-    const choixLivraison = ref('')
     const adresse = ref('')
     const dateDebut = ref('')
     const dateFin = ref('')
     const erreurs = reactive({})
 
-    async function mettreEnVente() {
+    async function mettreEnLocation() {
       console.log('AppelleMettreEnVente')
       Object.keys(erreurs).forEach((k) => delete erreurs[k])
 
@@ -140,13 +158,21 @@ export default {
         if (!extensionPermis.includes(extension))
           erreurs.photo = 'Seuls les fichier JPG, JPEG, PNG et WEBP sont acceptés'
       }
+      if (!typeConsole.value)
+        erreurs.typeConsole = 'Veuillez choisir le type de console'
       if (!choixPaiement.value)
         erreurs.choixPaiement = 'Veuillez choisir la méthode de paiement désirée'
-      if (!choixLivraison.value)
-        erreurs.choixLivraison = 'Veuillez choisir la méthode de livraison désirée'
-      if (!adresse.value && choixLivraison.value === 'mainPropre')
+      if (!adresse.value)
         erreurs.adresse =
-          "L'adresse est requise lorsque la méthode de livraison est en main propre."
+          "L'adresse est requise."
+      if (!dateDebut.value)
+        erreurs.dateDebut = 'Veuillez entrez une date de début'
+      if (dateDebut.value && dateDebut.value < new Date().toISOString().split('T')[0])
+        erreurs.dateDebut = 'La date de début ne peut pas être dans le passé'
+      if (!dateFin.value)
+        erreurs.dateFin = 'Veuillez entrez une date de fin'
+      if (dateFin.value && dateFin.value <= dateDebut.value)
+        erreurs.dateFin = 'La date de fin doit être après la date de début'
 
       if (Object.keys(erreurs).length > 0) return
 
@@ -154,13 +180,15 @@ export default {
         const formData = new FormData()
         formData.append('nomJeu', nomJeu.value)
         formData.append('prix', prix.value)
-        formData.append('photo', photo.value) // <-- fichier
+        formData.append('photo', photo.value)
+        formData.append('typeConsole', typeConsole.value)
         formData.append('choixPaiement', choixPaiement.value)
-        formData.append('choixLivraison', choixLivraison.value)
         formData.append('adresse', adresse.value)
-        formData.append('vendeurId', auth.userId)
+        formData.append('dateDebut', dateDebut.value)
+        formData.append('dateFin', dateFin.value)
+        formData.append('locateurId', auth.userId)
 
-        const reponse = await fetch('http://localhost:5000/vendre', {
+        const reponse = await fetch('http://localhost:5000/location', {
           method: 'POST',
           body: formData,
         })
@@ -168,10 +196,9 @@ export default {
         const data = await reponse.json()
 
         if (reponse.ok) {
-          router.push({
-            path: '/',
-            query: { success: 'Jeu mis en vente avec succès' },
-          })
+          notif.setNotif('Jeu mis en location avec succès')
+          // TODO: rediriger vers /mesLocations une fois la page créée
+          router.push('/')
         } else {
           Object.assign(erreurs, data.erreurs)
         }
@@ -194,11 +221,13 @@ export default {
       nomJeu,
       prix,
       photo,
+      typeConsole,
       choixPaiement,
-      choixLivraison,
       adresse,
+      dateDebut,
+      dateFin,
       erreurs,
-      mettreEnVente,
+      mettreEnLocation,
       changementPhoto,
     }
   },
