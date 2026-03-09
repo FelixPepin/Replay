@@ -10,7 +10,7 @@
                     </ul>
                 </div>
 
-                <form @submit.prevent="soumettre" action="http://localhost:5000/login" method="post" novalidate>
+                <form @submit.prevent="soumettre" action="/api/login" method="post" novalidate>
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
                         <input v-model="email" type="email" id="email" class="form-control" />
@@ -51,7 +51,7 @@ async function soumettre() {
     if (Object.keys(erreurs).length > 0) return
 
     try {
-        const reponse = await fetch('http://localhost:5000/login', {
+        const reponse = await fetch('/api/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
