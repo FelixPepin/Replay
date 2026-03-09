@@ -10,12 +10,7 @@
           </ul>
         </div>
 
-        <form
-          @submit.prevent="soumettre"
-          method="post"
-          action="/api/register"
-          novalidate
-        >
+        <form @submit.prevent="soumettre" method="post" action="/api/register" novalidate>
           <div class="mb-3">
             <label for="username" class="form-label">Nom d'utilisateur</label>
             <input
