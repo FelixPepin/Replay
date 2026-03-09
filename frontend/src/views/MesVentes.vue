@@ -13,7 +13,7 @@
           <div class="card mb-4 shadow-sm">
             <img
               class="card-img-top w-100"
-              :src="`http://localhost:5000/static/images/ajouts/${vente.Photo}`"
+              :src="`/static/images/ajouts/${vente.Photo}`"
             />
             <div class="card-body">
               <h2 class="card-title">Nom du jeu : {{ vente.NomJeu }}</h2>
@@ -47,7 +47,7 @@ onUnmounted(() => notif.clear())
 
 onMounted(async () => {
   try {
-    const res = await fetch(`http://localhost:5000/mesVentes/${auth.userId}`)
+    const res = await fetch(`/api/mesVentes/${auth.userId}`)
     const data = await res.json()
     if (res.ok) {
       ventes.value = data

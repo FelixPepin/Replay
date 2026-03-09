@@ -13,7 +13,7 @@
         <form
           @submit.prevent="soumettre"
           method="post"
-          action="http://localhost:5000/register"
+          action="/api/register"
           novalidate
         >
           <div class="mb-3">
@@ -97,7 +97,7 @@ async function soumettre() {
   if (Object.keys(erreurs).length > 0) return
 
   try {
-    const reponse = await fetch('http://localhost:5000/register', {
+    const reponse = await fetch('/api/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
