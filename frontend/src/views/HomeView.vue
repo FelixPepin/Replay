@@ -17,11 +17,13 @@ const getImageUrl = (name) => {
 
 <template>
   <main>
-    <div v-if="notif.message" class="container mt-3">
-      <div :class="`alert alert-${notif.type}`">{{ notif.message }}</div>
-    </div>
     <section class="hero-section d-flex align-items-center">
       <div class="container">
+        <div v-if="notif.message" class="row mb-3 mt-3">
+          <div class="col">
+            <div :class="`alert alert-${notif.type}`">{{ notif.message }}</div>
+          </div>
+        </div>
         <div class="row align-items-center">
           <div class="col-lg-6 text-white py-5">
             <h1 class="display-3 fw-bold mb-3">
