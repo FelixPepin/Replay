@@ -11,10 +11,7 @@
       <div class="row">
         <div v-for="vente in ventes" :key="vente.id" class="col-md-6">
           <div class="card mb-4 shadow-sm">
-            <img
-              class="card-img-top w-100"
-              :src="`/static/images/ajouts/${vente.Photo}`"
-            />
+            <img class="card-img-top w-100" :src="`/static/images/ajouts/${vente.Photo}`" />
             <div class="card-body">
               <h2 class="card-title">Nom du jeu : {{ vente.NomJeu }}</h2>
               <p class="card-text">Prix : {{ vente.Prix }}$</p>
