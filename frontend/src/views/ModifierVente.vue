@@ -11,7 +11,7 @@
                     </div>
 
                     <form @submit.prevent="modifierVente" method="post" enctype="multipart/form-data" novalidate
-                        action="http://localhost:5000/vendre">
+                        action="/api/vendre">
                         <div class="mb-3">
                             <label for="prix" class="form-label fw-bold">Prix</label>
                             <input v-model="prix" type="number" id="prix" name="prix" class="form-control" />
@@ -54,7 +54,7 @@
                             <label for="adresse" class="form-label fw-bold">Adresse</label>
                             <input v-model="adresse" type="text" id="adresse" name="adresse" class="form-control" />
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">Vendre le jeu</button>
+                        <button type="submit" class="btn btn-primary w-100">Modifier le jeu</button>
                     </form>
                 </div>
                 <div v-else>
@@ -69,7 +69,9 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useNotifStore } from '@/stores/notif'
 const auth = useAuthStore()
+const notif = useNotifStore()
 const router = useRouter()
 const route = useRoute()
 
@@ -86,7 +88,7 @@ const vendeurId = ref('')
 
 onMounted(async () => {
     try {
-        const res = await fetch(`http://localhost:5000/vente/${idVente}`)
+        const res = await fetch(`/api/vente/${idVente}`)
         const data = await res.json()
         if (res.ok) {
             prix.value = data.Prix
@@ -128,7 +130,7 @@ async function modifierVente() {
         formData.append('adresse', adresse.value)
         formData.append('vendeurId', auth.userId)
 
-        const reponse = await fetch(`http://localhost:5000/modifier/${idVente}`, {
+        const reponse = await fetch(`/api/modifier/${idVente}`, {
             method: 'POST',
             body: formData,
         })
@@ -136,10 +138,8 @@ async function modifierVente() {
         const data = await reponse.json()
 
         if (reponse.ok) {
-            router.push({
-                path: '/',
-                state: { success: 'Vente modifier avec succès' },
-            })
+            notif.setNotif('Vente modifiée avec succès')
+            router.push('/mesVentes')
         } else {
             Object.assign(erreurs, data.erreurs)
         }

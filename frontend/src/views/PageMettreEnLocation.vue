@@ -3,7 +3,7 @@
     <div class="container mt-2">
       <div class="row">
         <div v-if="auth.role === 'vendeur'" class="col-mb-3">
-          <h1 class="mb-4">Mettre un jeu en vente</h1>
+          <h1 class="mb-4">Mettre un jeu en location</h1>
           <div v-if="Object.keys(erreurs).length" class="alert alert-danger">
             <ul class="mb-0">
               <li v-for="(msg, champ) in erreurs" :key="champ">{{ msg }}</li>
@@ -11,11 +11,11 @@
           </div>
 
           <form
-            @submit.prevent="mettreEnVente"
+            @submit.prevent="mettreEnLocation"
             method="post"
             enctype="multipart/form-data"
             novalidate
-            action="/api/vendre"
+            action="/api/location"
           >
             <div class="mb-3">
               <label for="nomJeu" class="form-label fw-bold">Nom du jeu</label>
@@ -87,37 +87,6 @@
               </fieldset>
             </div>
             <div class="mb-3">
-              <fieldset>
-                <legend class="col-form-label pt-0 fw-bold">Type de livraison</legend>
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    name="choixLivraison"
-                    id="choixLivraisonPoste"
-                    value="Par la poste"
-                    v-model="choixLivraison"
-                  />
-                  <label class="form-check-label" for="choixLivraisonPoste"
-                    >Livraison par la poste</label
-                  >
-                </div>
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="radio"
-                    name="choixLivraison"
-                    id="choixLivraisonEnMainPropre"
-                    value="En main propre"
-                    v-model="choixLivraison"
-                  />
-                  <label class="form-check-label" for="choixLivraisonEnMainPropre"
-                    >Venir chercher en main propre</label
-                  >
-                </div>
-              </fieldset>
-            </div>
-            <div class="mb-3" v-if="choixLivraison === 'En main propre'">
               <label for="adresse" class="form-label fw-bold">Adresse</label>
               <input
                 v-model="adresse"
@@ -127,12 +96,20 @@
                 class="form-control"
               />
             </div>
-            <button type="submit" class="btn btn-primary w-100">Vendre le jeu</button>
+            <div class="mb-3">
+              <label for="dateDebut" class="form-label fw-bold">Date de début</label>
+              <input type="date" class="form-control" id="dateDebut" v-model="dateDebut"/>
+            </div>
+            <div class="mb-3">
+              <label for="dateFin" class="form-label fw-bold">Date de fin</label>
+              <input type="date" class="form-control" id="dateFin" v-model="dateFin"/>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Mettre en location</button>
           </form>
         </div>
         <div v-else>
           <p class="alert alert-warning">
-            Vous devez être vendeur pour vendre un jeu.
+            Vous devez être vendeur pour mettre un jeu en location.
             <router-link to="/login">Se connecter</router-link>
           </p>
         </div>
@@ -158,11 +135,12 @@ export default {
     const photo = ref(null)
     const typeConsole = ref('')
     const choixPaiement = ref('')
-    const choixLivraison = ref('')
     const adresse = ref('')
+    const dateDebut = ref('')
+    const dateFin = ref('')
     const erreurs = reactive({})
 
-    async function mettreEnVente() {
+    async function mettreEnLocation() {
       console.log('AppelleMettreEnVente')
       Object.keys(erreurs).forEach((k) => delete erreurs[k])
 
@@ -184,11 +162,17 @@ export default {
         erreurs.typeConsole = 'Veuillez choisir le type de console'
       if (!choixPaiement.value)
         erreurs.choixPaiement = 'Veuillez choisir la méthode de paiement désirée'
-      if (!choixLivraison.value)
-        erreurs.choixLivraison = 'Veuillez choisir la méthode de livraison désirée'
-      if (!adresse.value && choixLivraison.value === 'mainPropre')
+      if (!adresse.value)
         erreurs.adresse =
-          "L'adresse est requise lorsque la méthode de livraison est en main propre."
+          "L'adresse est requise."
+      if (!dateDebut.value)
+        erreurs.dateDebut = 'Veuillez entrez une date de début'
+      if (dateDebut.value && dateDebut.value < new Date().toISOString().split('T')[0])
+        erreurs.dateDebut = 'La date de début ne peut pas être dans le passé'
+      if (!dateFin.value)
+        erreurs.dateFin = 'Veuillez entrez une date de fin'
+      if (dateFin.value && dateFin.value <= dateDebut.value)
+        erreurs.dateFin = 'La date de fin doit être après la date de début'
 
       if (Object.keys(erreurs).length > 0) return
 
@@ -199,11 +183,12 @@ export default {
         formData.append('photo', photo.value)
         formData.append('typeConsole', typeConsole.value)
         formData.append('choixPaiement', choixPaiement.value)
-        formData.append('choixLivraison', choixLivraison.value)
         formData.append('adresse', adresse.value)
-        formData.append('vendeurId', auth.userId)
+        formData.append('dateDebut', dateDebut.value)
+        formData.append('dateFin', dateFin.value)
+        formData.append('locateurId', auth.userId)
 
-        const reponse = await fetch('/api/vendre', {
+        const reponse = await fetch('/api/location', {
           method: 'POST',
           body: formData,
         })
@@ -211,8 +196,9 @@ export default {
         const data = await reponse.json()
 
         if (reponse.ok) {
-          notif.setNotif('Jeu mis en vente avec succès')
-          router.push('/mesVentes')
+          notif.setNotif('Jeu mis en location avec succès')
+          // TODO: rediriger vers /mesLocations une fois la page créée
+          router.push('/')
         } else {
           Object.assign(erreurs, data.erreurs)
         }
@@ -237,10 +223,11 @@ export default {
       photo,
       typeConsole,
       choixPaiement,
-      choixLivraison,
       adresse,
+      dateDebut,
+      dateFin,
       erreurs,
-      mettreEnVente,
+      mettreEnLocation,
       changementPhoto,
     }
   },

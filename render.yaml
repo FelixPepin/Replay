@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: replay
+    env: python
+    buildCommand: chmod +x build.sh && ./build.sh
+    startCommand: cd backend && gunicorn app:app
+    envVars:
+      - key: DB_HOST
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        sync: false
+      - key: DB_PORT
+        sync: false
+      - key: SECRET_KEY
+        sync: false

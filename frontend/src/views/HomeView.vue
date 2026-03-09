@@ -1,5 +1,8 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onUnmounted } from 'vue'
+import { useNotifStore } from '@/stores/notif'
+const notif = useNotifStore()
+onUnmounted(() => notif.clear())
 
 const carouselItems = ref([
   { id: 1, img: 'jeux1.jpg', alt: 'Jeux action' },
@@ -14,6 +17,9 @@ const getImageUrl = (name) => {
 
 <template>
   <main>
+    <div v-if="notif.message" class="container mt-3">
+      <div :class="`alert alert-${notif.type}`">{{ notif.message }}</div>
+    </div>
     <section class="hero-section d-flex align-items-center">
       <div class="container">
         <div class="row align-items-center">
