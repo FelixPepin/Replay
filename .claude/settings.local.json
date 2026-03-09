@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Program Files/MySQL/MySQL Server 9.1/bin/**)",
+      "Read(//c/Program Files/MySQL/MySQL Server 8.0/bin/**)"
+    ]
+  }
+}

@@ -11,7 +11,7 @@
                     </div>
 
                     <form @submit.prevent="modifierVente" method="post" enctype="multipart/form-data" novalidate
-                        action="http://localhost:5000/vendre">
+                        action="/api/vendre">
                         <div class="mb-3">
                             <label for="prix" class="form-label fw-bold">Prix</label>
                             <input v-model="prix" type="number" id="prix" name="prix" class="form-control" />
@@ -88,7 +88,7 @@ const vendeurId = ref('')
 
 onMounted(async () => {
     try {
-        const res = await fetch(`http://localhost:5000/vente/${idVente}`)
+        const res = await fetch(`/api/vente/${idVente}`)
         const data = await res.json()
         if (res.ok) {
             prix.value = data.Prix
@@ -130,7 +130,7 @@ async function modifierVente() {
         formData.append('adresse', adresse.value)
         formData.append('vendeurId', auth.userId)
 
-        const reponse = await fetch(`http://localhost:5000/modifier/${idVente}`, {
+        const reponse = await fetch(`/api/modifier/${idVente}`, {
             method: 'POST',
             body: formData,
         })

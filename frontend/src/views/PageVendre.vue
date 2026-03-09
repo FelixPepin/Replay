@@ -15,7 +15,7 @@
             method="post"
             enctype="multipart/form-data"
             novalidate
-            action="http://localhost:5000/vendre"
+            action="/api/vendre"
           >
             <div class="mb-3">
               <label for="nomJeu" class="form-label fw-bold">Nom du jeu</label>
@@ -203,7 +203,7 @@ export default {
         formData.append('adresse', adresse.value)
         formData.append('vendeurId', auth.userId)
 
-        const reponse = await fetch('http://localhost:5000/vendre', {
+        const reponse = await fetch('/api/vendre', {
           method: 'POST',
           body: formData,
         })

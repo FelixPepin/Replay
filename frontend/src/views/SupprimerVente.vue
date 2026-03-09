@@ -6,7 +6,7 @@
                     <h1 class="mb-4 text-center">Supprimer un jeu en vente</h1>
                     <div v-if="auth.userId === vendeurId">
                         <div class="card mb-4 shadow-sm">
-                            <img class="card-img-top w-100" :src="`http://localhost:5000/static/images/ajouts/${photo}`" />
+                            <img class="card-img-top w-100" :src="`/static/images/ajouts/${photo}`" />
                             <div class="card-body">
                                 <h2 class="card-title">Nom du jeu : {{ nomJeu }}</h2>
                                 <p class="card-text">Prix : {{ prix }}$</p>
@@ -50,7 +50,7 @@ const photo = ref('')
 
 onMounted(async () => {
     try {
-        const res = await fetch(`http://localhost:5000/vente/${idVente}`)
+        const res = await fetch(`/api/vente/${idVente}`)
         const data = await res.json()
         if (res.ok) {
             prix.value = data.Prix
@@ -71,7 +71,7 @@ onMounted(async () => {
 
 async function supprimerVente() {
     try {
-        const reponse = await fetch(`http://localhost:5000/supprimer/${idVente}`, {
+        const reponse = await fetch(`/api/supprimer/${idVente}`, {
             method: 'POST',
         })
 
