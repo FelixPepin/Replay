@@ -2,7 +2,9 @@
 import { ref, computed, onMounted } from 'vue'
 import { RouterLink, RouterView, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useNotifStore } from '@/stores/notif'
 const auth = useAuthStore()
+const notif = useNotifStore()
 const router = useRouter()
 const message = ref('')
 const estConnecte = computed(() => !!localStorage.getItem('token'))
@@ -12,7 +14,8 @@ onMounted(() => {
 
 function deconnecter() {
   auth.deconnecter()
-  router.push('/login')
+  notif.setNotif('Vous avez été déconnecté.', 'info')
+  router.push('/')
 }
 </script>
 
