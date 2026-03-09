@@ -36,7 +36,9 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useNotifStore } from '@/stores/notif'
 const auth = useAuthStore()
+const notif = useNotifStore()
 
 const router = useRouter()
 
@@ -64,6 +66,7 @@ async function soumettre() {
 
         if(reponse.ok){
             auth.connecter(data.token)
+            notif.setNotif('Connexion réussie ! Bienvenue.')
             router.push('/')
         } else{
             Object.assign(erreurs,data.erreurs)
