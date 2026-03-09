@@ -69,8 +69,10 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
+import { useNotifStore } from '@/stores/notif'
 
 const router = useRouter()
+const notif = useNotifStore()
 
 const username = ref('')
 const email = ref('')
@@ -112,6 +114,7 @@ async function soumettre() {
 
     if (reponse.ok) {
       localStorage.setItem('token', data.token)
+      notif.setNotif('Compte créé avec succès ! Bienvenue sur RePlay.')
       router.push('/')
     } else {
       Object.assign(erreurs, data.erreurs)
