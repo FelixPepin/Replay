@@ -98,11 +98,11 @@
             </div>
             <div class="mb-3">
               <label for="dateDebut" class="form-label fw-bold">Date de début</label>
-              <input type="date" class="form-control" id="dateDebut" v-model="dateDebut"/>
+              <input type="date" class="form-control" id="dateDebut" v-model="dateDebut" />
             </div>
             <div class="mb-3">
               <label for="dateFin" class="form-label fw-bold">Date de fin</label>
-              <input type="date" class="form-control" id="dateFin" v-model="dateFin"/>
+              <input type="date" class="form-control" id="dateFin" v-model="dateFin" />
             </div>
             <button type="submit" class="btn btn-primary w-100">Mettre en location</button>
           </form>
@@ -158,19 +158,14 @@ export default {
         if (!extensionPermis.includes(extension))
           erreurs.photo = 'Seuls les fichier JPG, JPEG, PNG et WEBP sont acceptés'
       }
-      if (!typeConsole.value)
-        erreurs.typeConsole = 'Veuillez choisir le type de console'
+      if (!typeConsole.value) erreurs.typeConsole = 'Veuillez choisir le type de console'
       if (!choixPaiement.value)
         erreurs.choixPaiement = 'Veuillez choisir la méthode de paiement désirée'
-      if (!adresse.value)
-        erreurs.adresse =
-          "L'adresse est requise."
-      if (!dateDebut.value)
-        erreurs.dateDebut = 'Veuillez entrez une date de début'
+      if (!adresse.value) erreurs.adresse = "L'adresse est requise."
+      if (!dateDebut.value) erreurs.dateDebut = 'Veuillez entrez une date de début'
       if (dateDebut.value && dateDebut.value < new Date().toISOString().split('T')[0])
         erreurs.dateDebut = 'La date de début ne peut pas être dans le passé'
-      if (!dateFin.value)
-        erreurs.dateFin = 'Veuillez entrez une date de fin'
+      if (!dateFin.value) erreurs.dateFin = 'Veuillez entrez une date de fin'
       if (dateFin.value && dateFin.value <= dateDebut.value)
         erreurs.dateFin = 'La date de fin doit être après la date de début'
 

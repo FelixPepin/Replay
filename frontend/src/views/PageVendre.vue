@@ -180,8 +180,7 @@ export default {
         if (!extensionPermis.includes(extension))
           erreurs.photo = 'Seuls les fichier JPG, JPEG, PNG et WEBP sont acceptés'
       }
-      if (!typeConsole.value)
-        erreurs.typeConsole = 'Veuillez choisir le type de console'
+      if (!typeConsole.value) erreurs.typeConsole = 'Veuillez choisir le type de console'
       if (!choixPaiement.value)
         erreurs.choixPaiement = 'Veuillez choisir la méthode de paiement désirée'
       if (!choixLivraison.value)
