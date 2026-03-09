@@ -1,7 +1,7 @@
 import os
 
 from dotenv import load_dotenv
-from flask import Flask, send_from_directory
+from flask import Flask, send_file
 from flask_cors import CORS
 
 from routes.authentification import bp_auth
@@ -26,9 +26,10 @@ FRONTEND_DIST = os.path.join(os.path.dirname(app.root_path), 'frontend', 'dist')
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve_frontend(path):
-    if path and os.path.exists(os.path.join(FRONTEND_DIST, path)):
-        return send_from_directory(FRONTEND_DIST, path)
-    return send_from_directory(FRONTEND_DIST, 'index.html')
+    target = os.path.join(FRONTEND_DIST, path)
+    if path and os.path.isfile(target):
+        return send_file(target)
+    return send_file(os.path.join(FRONTEND_DIST, 'index.html'))
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
