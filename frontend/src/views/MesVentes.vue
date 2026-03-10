@@ -1,17 +1,17 @@
 <template>
   <main>
     <div class="container">
-      <h1 class="mb-4">Mes Ventes</h1>
+      <h1 class="mb-4 mt-2">Mes Ventes</h1>
+      <div v-if="notif.message" :class="`alert alert-${notif.type}`">
+        {{ notif.message }}
+      </div>
       <div v-if="erreurs" class="alert alert-danger">
         {{ erreurs }}
       </div>
       <div class="row">
         <div v-for="vente in ventes" :key="vente.id" class="col-md-6">
           <div class="card mb-4 shadow-sm">
-            <img
-              class="card-img-top w-100"
-              :src="`http://localhost:5000/static/images/ajouts/${vente.Photo}`"
-            />
+            <img class="card-img-top w-100" :src="`/static/images/ajouts/${vente.Photo}`" />
             <div class="card-body">
               <h2 class="card-title">Nom du jeu : {{ vente.NomJeu }}</h2>
               <p class="card-text">Prix : {{ vente.Prix }}$</p>
@@ -33,14 +33,18 @@
 </template>
 <script setup>
 import { useAuthStore } from '@/stores/auth'
-import { ref, onMounted } from 'vue'
+import { useNotifStore } from '@/stores/notif'
+import { ref, onMounted, onUnmounted } from 'vue'
 const ventes = ref([])
 const erreurs = ref('')
 const auth = useAuthStore()
+const notif = useNotifStore()
+
+onUnmounted(() => notif.clear())
 
 onMounted(async () => {
   try {
-    const res = await fetch(`http://localhost:5000/mesVentes/${auth.userId}`)
+    const res = await fetch(`/api/mesVentes/${auth.userId}`)
     const data = await res.json()
     if (res.ok) {
       ventes.value = data

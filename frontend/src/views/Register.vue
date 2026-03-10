@@ -10,12 +10,7 @@
           </ul>
         </div>
 
-        <form
-          @submit.prevent="soumettre"
-          method="post"
-          action="http://localhost:5000/register"
-          novalidate
-        >
+        <form @submit.prevent="soumettre" method="post" action="/api/register" novalidate>
           <div class="mb-3">
             <label for="username" class="form-label">Nom d'utilisateur</label>
             <input
@@ -69,8 +64,10 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
+import { useNotifStore } from '@/stores/notif'
 
 const router = useRouter()
+const notif = useNotifStore()
 
 const username = ref('')
 const email = ref('')
@@ -97,7 +94,7 @@ async function soumettre() {
   if (Object.keys(erreurs).length > 0) return
 
   try {
-    const reponse = await fetch('http://localhost:5000/register', {
+    const reponse = await fetch('/api/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -112,6 +109,7 @@ async function soumettre() {
 
     if (reponse.ok) {
       localStorage.setItem('token', data.token)
+      notif.setNotif('Compte créé avec succès ! Bienvenue sur RePlay.')
       router.push('/')
     } else {
       Object.assign(erreurs, data.erreurs)
