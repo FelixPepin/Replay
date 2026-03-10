@@ -2,7 +2,9 @@
 import { ref, computed, onMounted } from 'vue'
 import { RouterLink, RouterView, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useNotifStore } from '@/stores/notif'
 const auth = useAuthStore()
+const notif = useNotifStore()
 const router = useRouter()
 const message = ref('')
 const estConnecte = computed(() => !!localStorage.getItem('token'))
@@ -12,7 +14,8 @@ onMounted(() => {
 
 function deconnecter() {
   auth.deconnecter()
-  router.push('/login')
+  notif.setNotif('Vous avez été déconnecté.', 'info')
+  router.push('/')
 }
 </script>
 
@@ -24,8 +27,15 @@ function deconnecter() {
 
         <div class="d-flex align-items-center">
           <RouterLink to="/achat" class="nav-link text-white me-3">Acheter</RouterLink>
-          <RouterLink to="/vendre" class="nav-link text-white me-3">Vendre</RouterLink>
-          <RouterLink to="/location" class="nav-link text-white me-3">Location</RouterLink>
+          <RouterLink v-if="auth.estConnecte" to="/vendre" class="nav-link text-white me-3"
+            >Mettre en Vendre</RouterLink
+          >
+          <RouterLink
+            v-if="auth.estConnecte"
+            to="/mettreEnLocation"
+            class="nav-link text-white me-3"
+            >Mettre en location</RouterLink
+          >
           <RouterLink v-if="auth.estConnecte" to="/mesVentes" class="nav-link text-white me-3">
             Mes Ventes
           </RouterLink>

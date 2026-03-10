@@ -14,6 +14,7 @@ def vendre():
     nomJeu = (request.form.get("nomJeu","")).strip()
     prix = request.form.get("prix","")
     
+    typeConsole = request.form.get("typeConsole","")
     choixPaiement = request.form.get("choixPaiement","")
     choixLivraison = request.form.get("choixLivraison","")
     adresse = request.form.get("adresse","")
@@ -28,12 +29,13 @@ def vendre():
         with bd.creer_connexion() as conn:
             with conn.get_curseur() as curseur:
                 curseur.execute(
-                    'INSERT INTO ventes (NomJeu, Prix, Photo, TypePaiement, TypeLivraison, Adresse, VendeurId) VALUES (%(NomJeu)s, %(Prix)s,'
-                    ' %(Photo)s, %(Paiement)s, %(Livraison)s, %(Adresse)s, %(VendeurId)s)',
+                    'INSERT INTO ventes (NomJeu, Prix, Photo, TypeConsole, TypePaiement, TypeLivraison, Adresse, VendeurId) VALUES (%(NomJeu)s, %(Prix)s,'
+                    ' %(Photo)s, %(TypeConsole)s, %(Paiement)s, %(Livraison)s, %(Adresse)s, %(VendeurId)s)',
                     {
                         'NomJeu' : nomJeu,
                         'Prix' : prix,
                         'Photo' : nomFichier,
+                        'TypeConsole' : typeConsole,
                         'Paiement' : choixPaiement,
                         'Livraison' : choixLivraison,
                         'Adresse' : adresse,
