@@ -3,7 +3,7 @@
     <div class="container mt-2">
       <div class="row">
         <div v-if="auth.userId === vendeurId" class="col-mb-3">
-          <h1 class="mb-4">Mettre un jeu en vente</h1>
+          <h1 class="mb-4">Modifier une vente</h1>
           <div v-if="Object.keys(erreurs).length" class="alert alert-danger">
             <ul class="mb-0">
               <li v-for="(msg, champ) in erreurs" :key="champ">{{ msg }}</li>
@@ -93,11 +93,11 @@
                 class="form-control"
               />
             </div>
-            <button type="submit" class="btn btn-primary w-100">Modifier le jeu</button>
+            <button type="submit" class="btn btn-primary w-100">Modifier la vente.</button>
           </form>
         </div>
         <div v-else>
-          <p class="alert alert-warning">Vous devez être le vendeur pour modifier ce jeu.</p>
+          <p class="alert alert-warning">Vous devez être le vendeur pour modifier cette vente.</p>
         </div>
       </div>
     </div>
