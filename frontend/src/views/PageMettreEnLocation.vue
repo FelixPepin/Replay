@@ -193,7 +193,7 @@ export default {
         if (reponse.ok) {
           notif.setNotif('Jeu mis en location avec succès')
           // TODO: rediriger vers /mesLocations une fois la page créée
-          router.push('/')
+          router.push('/mesLocations')
         } else {
           Object.assign(erreurs, data.erreurs)
         }

@@ -26,20 +26,52 @@ function deconnecter() {
         <a class="navbar-brand fw-bold fs-3 text-warning" href="/">RePlay</a>
 
         <div class="d-flex align-items-center">
-          <RouterLink to="/achat" class="nav-link text-white me-3">Acheter</RouterLink>
-          <RouterLink to="/louer" class="nav-link text-white me-3">Louer</RouterLink>
-          <RouterLink v-if="auth.estConnecte" to="/vendre" class="nav-link text-white me-3"
-            >Mettre en Vendre</RouterLink
-          >
-          <RouterLink
-            v-if="auth.estConnecte"
-            to="/mettreEnLocation"
-            class="nav-link text-white me-3"
-            >Mettre en location</RouterLink
-          >
-          <RouterLink v-if="auth.estConnecte" to="/mesVentes" class="nav-link text-white me-3">
-            Mes Ventes
-          </RouterLink>
+        
+
+          <!-- Dropdown Ventes -->
+          <div class="dropdown me-3">
+            <button
+              class="btn btn-link nav-link text-white dropdown-toggle p-0"
+              type="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              Ventes
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark">
+              <li v-if="auth.role === 'vendeur'">
+                <RouterLink to="/vendre" class="dropdown-item">Mettre en vente</RouterLink>
+              </li>
+              <li>
+                <RouterLink to="/achat" class="dropdown-item">Voir les ventes</RouterLink>
+              </li>
+              <li v-if="auth.role === 'vendeur'">
+                <RouterLink to="/mesVentes" class="dropdown-item">Mes ventes</RouterLink>
+              </li>
+            </ul>
+          </div>
+
+          <div class="dropdown me-3">
+            <button
+              class="btn btn-link nav-link text-white dropdown-toggle p-0"
+              type="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              Locations
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark">
+              <li v-if="auth.role === 'vendeur'">
+                <RouterLink to="/mettreEnLocation" class="dropdown-item">Mettre en location</RouterLink>
+              </li>
+              <li>
+                <RouterLink to="/louer" class="dropdown-item">Voir les locations</RouterLink>
+              </li>
+              <li v-if="auth.role === 'vendeur'">
+                <RouterLink to="/mesLocations" class="dropdown-item">Mes locations</RouterLink>
+              </li>
+            </ul>
+          </div>
           <div class="ms-2 d-flex gap-2">
             <RouterLink
               v-if="!auth.estConnecte"
@@ -147,5 +179,25 @@ body {
 
 .nav-link:hover {
   color: #ffca28 !important;
+}
+
+.dropdown-menu {
+  animation: dropdownFadeIn 0.2s ease forwards;
+  transform-origin: top center;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scaleY(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
+}
+
+.dropdown-item {
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 </style>

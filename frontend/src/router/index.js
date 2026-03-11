@@ -9,6 +9,7 @@ import ModifierVente from '@/views/ModifierVente.vue'
 import SupprimerVente from '@/views/SupprimerVente.vue'
 import PageLocation from '@/views/PageLocation.vue'
 import PageMettreEnLocation from '@/views/PageMettreEnLocation.vue'
+import MesLocations from '@/views/MesLocations.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -62,6 +63,11 @@ const router = createRouter({
       path: '/louer',
       name: 'louer',
       component: PageLocation
+    },
+    {
+      path: '/mesLocations',
+      name: 'mesLocations',
+      component: MesLocations
     }
   ],
 })
