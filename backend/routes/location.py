@@ -45,3 +45,22 @@ def location():
     except mysql.connector.Error as error:
         current_app.logger.exception(error)
         return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500
+
+# Permet d'afficher les locations d'un vendeur
+@bp_location.route("/mesLocations/<int:id_utilisateur>", methods=['GET'])
+def mesLocations(id_utilisateur):
+    locations = []
+
+    try:
+        with bd.creer_connexion() as conn:
+            with conn.get_curseur() as curseur:
+                curseur.execute("SELECT l.Id as Id, l.NomJeu, l.Prix, l.Photo, l.TypePaiement, l.Adresse, u.NomUtilisateur," \
+                " l.DateDebut, l.DateFin FROM locations l JOIN utilisateurs u ON l.LocateurId = u.Id WHERE u.Id = %(idUtilisateur)s",
+                {
+                    'idUtilisateur' : id_utilisateur
+                })
+                locations = curseur.fetchall()
+    except mysql.connector.Error as err:
+        print(err)
+        abort(500)
+    return jsonify(locations)
