@@ -110,7 +110,7 @@ def modifier(idVente):
         current_app.logger.exception(error)
         return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500
     
-@bp_vente.route("/supprimer/<int:idVente>", methods=['POST'])
+@bp_vente.route("/supprimerVente/<int:idVente>", methods=['POST'])
 def supprimer(idVente):
     try:
         with bd.creer_connexion() as conn:
