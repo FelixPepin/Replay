@@ -4,16 +4,24 @@
             <h1>Liste de jeux disponible en location</h1>
         </div>
 
+        <div class="mb-4 col-md-3">
+            <select v-model="tri" class="form-select">
+                <option value="alpha">Ordre alphabétique</option>
+                <option value="prix_asc">Prix croissant</option>
+                <option value="prix_desc">Prix décroissant</option>
+            </select>
+        </div>
+
         <div class="row">
-            <div v-for="jeu in jeux" :key="jeu.id" class="col-lg-6 mb-3">
+            <div v-for="jeu in jeuxTriees" :key="jeu.Id" class="col-lg-6 mb-3">
                 <div class="card h-100">
                     <div class="card-body">
-                        <h2 class="card-title h5">{{ jeu.nom }}</h2>
+                        <h2 class="card-title h5">{{ jeu.NomJeu }}</h2>
                         <p class="card-text text-primary fw-bold">
-                            <span class="text-black">Prix : </span> {{ jeu.prix }} $
+                            <span class="text-black">Prix : </span> {{ jeu.Prix }} $
                         </p>
                         <p class="card-text text-primary fw-bold">
-                            <span class="text-black">Console : </span> {{ jeu.console }}
+                            <span class="text-black">Console : </span> {{ jeu.TypeConsole }}
                         </p>
                         <button class="btn btn-sm btn-success me-2">Louer</button>
                         <button class="btn btn-sm btn-success">Détails</button>
@@ -25,19 +33,34 @@
     </main>
 </template>
 <script setup>
-import { ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import axios from 'axios'
+const tri = ref('alpha')
+const jeux = ref([])
 
-const jeux = ref([
-    { id: 1, nom: "Ghost of Tsushima", prix: 2.50, console: "PS5", etat: "Comme neuf" },
-    { id: 2, nom: "Super Mario Wonder", prix: 3.00, console: "Switch", etat: "Excellent" },
-    { id: 3, nom: "Starfield", prix: 2.00, console: "Xbox Series", etat: "Bon état" },
-    { id: 4, nom: "Final Fantasy VII Rebirth", prix: 4.00, console: "PS5", etat: "Neuf" },
-    { id: 5, nom: "Metroid Dread", prix: 2.50, console: "Switch", etat: "Excellent" },
-    { id: 6, nom: "Forza Horizon 5", prix: 2.00, console: "Xbox Series", etat: "Bon état" },
-    { id: 7, nom: "Baldur's Gate 3", prix: 3.50, console: "PC / PS5", etat: "Comme neuf" },
-    { id: 8, nom: "Hollow Knight: Silksong", prix: 1.50, console: "Multi", etat: "Neuf" },
-    { id: 9, nom: "Resident Evil 4 Remake", prix: 3.00, console: "PS5 / Xbox", etat: "Excellent" },
-    { id: 10, nom: "The Last of Us Part I", prix: 2.50, console: "PS5", etat: "Comme neuf" }
-]);
+const jeuxTriees = computed(() => {
+    const liste = [...jeux.value]
+    if (liste.length === 0) return []
 
+    if (tri.value === 'alpha')
+        return liste.sort((a, b) => a.NomJeu.localeCompare(b.NomJeu))
+    else if (tri.value === 'prix_asc')
+        return liste.sort((a, b) => a.Prix - b.Prix)
+    else if (tri.value === 'prix_desc')
+        return liste.sort((a, b) => b.Prix - a.Prix)
+
+    return liste
+})
+
+onMounted(async () => {
+    try {
+        const response = await axios.get('/api/locations')
+        console.log('type:', typeof response.data)
+        console.log('données:', response.data)
+
+        jeux.value = Array.isArray(response.data) ? response.data : []
+    } catch (err) {
+        console.error('Erreur:', err)
+    }
+})
 </script>
