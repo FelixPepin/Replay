@@ -57,4 +57,53 @@ def get_locations():
 
     except mysql.connector.Error as error:
         current_app.logger.exception(error)
+
+# Permet d'afficher les locations d'un vendeur
+@bp_location.route("/mesLocations/<int:id_utilisateur>", methods=['GET'])
+def mesLocations(id_utilisateur):
+    locations = []
+
+    try:
+        with bd.creer_connexion() as conn:
+            with conn.get_curseur() as curseur:
+                curseur.execute("SELECT l.Id as Id, l.NomJeu, l.Prix, l.Photo, l.TypePaiement, l.Adresse, u.NomUtilisateur," \
+                " l.DateDebut, l.DateFin FROM locations l JOIN utilisateurs u ON l.LocateurId = u.Id WHERE u.Id = %(idUtilisateur)s",
+                {
+                    'idUtilisateur' : id_utilisateur
+                })
+                locations = curseur.fetchall()
+    except mysql.connector.Error as err:
+        print(err)
+        abort(500)
+    return jsonify(locations)
+
+# Permet de sélectionner une vente précise
+@bp_location.route("/location/<int:id_location>", methods=['GET'])
+def vente(id_location):
+    location = None
+
+    try:
+        with bd.creer_connexion() as conn:
+            with conn.get_curseur() as curseur:
+                curseur.execute("SELECT NomJeu, Prix, Photo, TypePaiement, Adresse, LocateurId," \
+                " DateDebut, DateFin, EstLoue, TypeConsole FROM locations" \
+                " WHERE Id = %(idLocation)s",
+                {
+                    'idLocation' : id_location
+                })
+                location = curseur.fetchone()
+    except mysql.connector.Error as err:
+        print(err)
+        abort(500)
+    return jsonify(location)
+
+@bp_location.route("/supprimerLocation/<int:id_location>", methods=['POST'])
+def supprimer(id_location):
+    try:
+        with bd.creer_connexion() as conn:
+            with conn.get_curseur() as curseur:
+                curseur.execute('DELETE FROM locations WHERE Id = %(idLocation)s', {'idLocation' : id_location})
+        return jsonify({"succes": True}), 200
+    except mysql.connector.Error as err:
+        current_app.logger.exception(err)
         return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500

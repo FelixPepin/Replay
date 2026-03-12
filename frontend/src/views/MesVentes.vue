@@ -8,6 +8,7 @@
       <div v-if="erreurs" class="alert alert-danger">
         {{ erreurs }}
       </div>
+      <p v-if="ventes.length === 0 && !erreurs" class="alert alert-info">Vous n'avez aucune vente.</p>
       <div class="row">
         <div v-for="vente in ventes" :key="vente.id" class="col-md-6">
           <div class="card mb-4 shadow-sm">
@@ -18,10 +19,10 @@
               <p class="card-text">Vendeur : {{ vente.NomUtilisateur }}</p>
               <p class="card-text">Livraison : {{ vente.TypeLivraison }}</p>
               <p class="card-text">Paiement : {{ vente.TypePaiement }}</p>
-              <RouterLink :to="`/modifier/${vente.Id}`" class="btn btn-warning p-2 text-black ms-5"
+              <RouterLink :to="`/modifierVente/${vente.Id}`" class="btn btn-warning p-2 text-black ms-5"
                 >Modifier</RouterLink
               >
-              <RouterLink :to="`/supprimer/${vente.Id}`" class="btn btn-danger p-2 text-black ms-5"
+              <RouterLink :to="`/supprimerVente/${vente.Id}`" class="btn btn-danger p-2 text-black ms-5"
                 >Supprimer</RouterLink
               >
             </div>
