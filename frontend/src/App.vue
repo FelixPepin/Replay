@@ -118,7 +118,7 @@ function deconnecter() {
               >
             </li>
             <li class="mb-2">
-              <RouterLink to="/location" class="text-white text-decoration-none hover-warning"
+              <RouterLink to="/louer" class="text-white text-decoration-none hover-warning"
                 >Louer</RouterLink
               >
             </li>
