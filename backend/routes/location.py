@@ -45,3 +45,16 @@ def location():
     except mysql.connector.Error as error:
         current_app.logger.exception(error)
         return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500
+
+@bp_location.route("/locations", methods=['GET'])
+def get_locations():
+    try:
+        with bd.creer_connexion() as conn:
+            with conn.get_curseur() as curseur:
+                curseur.execute('SELECT * FROM locations')
+                locations = curseur.fetchall()
+        return jsonify(locations), 200
+
+    except mysql.connector.Error as error:
+        current_app.logger.exception(error)
+        return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500
