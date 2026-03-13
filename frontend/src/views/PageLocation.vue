@@ -4,12 +4,19 @@
             <h1>Liste de jeux disponible en location</h1>
         </div>
 
-        <div class="mb-4 col-md-3">
-            <select v-model="tri" class="form-select">
-                <option value="alpha">Ordre alphabétique</option>
-                <option value="prix_asc">Prix croissant</option>
-                <option value="prix_desc">Prix décroissant</option>
-            </select>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <div class="col-md-3">
+                <select v-model="tri" class="form-select">
+                    <option value="alpha">Ordre alphabétique</option>
+                    <option value="prix_asc">Prix croissant</option>
+                    <option value="prix_desc">Prix décroissant</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <input v-model="recherche" class="form-control me-2" type="search" placeholder="Nom du jeu"
+                    aria-label="Search">
+            </div>
         </div>
 
         <div class="row">
@@ -36,11 +43,15 @@
 import { computed, onMounted, ref } from 'vue';
 import axios from 'axios'
 const tri = ref('alpha')
+const recherche = ref('')
 const jeux = ref([])
 
 const jeuxTriees = computed(() => {
-    const liste = [...jeux.value]
+    let liste = [...jeux.value]
     if (liste.length === 0) return []
+
+    if (recherche.value.trim() !== '')
+        liste = liste.filter(jeu => jeu.NomJeu.toLowerCase().includes(recherche.value.toLowerCase()))
 
     if (tri.value === 'alpha')
         return liste.sort((a, b) => a.NomJeu.localeCompare(b.NomJeu))
