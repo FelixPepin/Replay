@@ -11,6 +11,7 @@ import PageLocation from '@/views/PageLocation.vue'
 import PageMettreEnLocation from '@/views/PageMettreEnLocation.vue'
 import MesLocations from '@/views/MesLocations.vue'
 import SupprimerLocation from '@/views/SupprimerLocation.vue'
+import ModifierLocation from '@/views/ModifierLocation.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -74,6 +75,11 @@ const router = createRouter({
       path: '/supprimerLocation/:id',
       name: 'supprimerLocation',
       component: SupprimerLocation
+    },
+    {
+      path: '/modifierLocation/:id',
+      name: 'modifierLocation',
+      component: ModifierLocation
     }
   ],
 })
