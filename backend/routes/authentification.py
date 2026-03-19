@@ -64,6 +64,14 @@ def register():
                 # session['courriel'] = email
 
                 current_app.logger.info(f"CRÉATION D'UN COMPTE : Utilisateur ID : {curseur.lastrowid} {email}")
+                token = jwt.encode({
+                'utilisateur_id': curseur.lastrowid,
+                'nomUtilisateur': username,
+                'courriel': email,
+                'role': 'vendeur',
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)
+            }, current_app.secret_key, algorithm='HS256')
+            return jsonify({"token": token}), 200
 
         return jsonify({"succes": True}), 201
 
@@ -102,6 +110,7 @@ def login():
         if (result):
             token = jwt.encode({
                 'utilisateur_id': utilisateur['Id'],
+                'nomUtilisateur': utilisateur['NomUtilisateur'],
                 'courriel': utilisateur['Courriel'],
                 'role': utilisateur['Role'],
                 'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)

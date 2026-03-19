@@ -5,13 +5,15 @@
     </div>
 
     <div class="row">
-      <div v-for="jeu in jeux" :key="jeu.id" class="col-lg-6 mb-3">
+      <div v-for="jeu in jeux" :key="jeu.Id" class="col-lg-6 mb-3">
         <div class="card h-100">
+          <img class="card-img-top w-100" :src="`/static/images/ajouts/${jeu.Photo}`" />
           <div class="card-body">
-            <h2 class="card-title h5">{{ jeu.nom }}</h2>
-            <p class="card-text text-primary fw-bold">{{ jeu.prix }} $</p>
-            <button class="btn btn-sm btn-success me-2">Ajouter au panier</button>
-            <button class="btn btn-sm btn-success">Détails</button>
+            <h2 class="card-title">Nom du jeu : {{ jeu.NomJeu }}</h2>
+            <p class="card-text">Prix : {{ jeu.Prix }}$</p>
+            <p class="card-text">Vendeur : {{ jeu.NomUtilisateur }}</p>
+            <p class="card-text">Livraison : {{ jeu.TypeLivraison }}</p>
+            <p class="card-text">Paiement : {{ jeu.TypePaiement }}</p>
           </div>
         </div>
       </div>
@@ -19,18 +21,22 @@
   </main>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { computed, onMounted, ref } from 'vue';
+import axios from 'axios'
+import { useAuthStore } from '@/stores/auth';
+const jeux = ref([])
+const auth = useAuthStore()
 
-const jeux = ref([
-  { id: 1, nom: 'God of War', prix: 12.5 },
-  { id: 2, nom: 'The Legend of Zelda: Breath of the Wild', prix: 45.0 },
-  { id: 3, nom: 'Elden Ring', prix: 35.0 },
-  { id: 4, nom: 'Mario Kart 8 Deluxe', prix: 40.0 },
-  { id: 5, nom: 'Spider-Man: Miles Morales', prix: 20.0 },
-  { id: 6, nom: 'Red Dead Redemption 2', prix: 15.75 },
-  { id: 7, nom: 'Minecraft', prix: 18.0 },
-  { id: 8, nom: 'Hades', prix: 14.5 },
-  { id: 9, nom: 'Cyberpunk 2077', prix: 25.0 },
-  { id: 10, nom: 'Animal Crossing: New Horizons', prix: 38.0 },
-])
+
+onMounted(async () => {
+  try {
+    const response = await axios.get('/api/ventes')
+    console.log('type:', typeof response.data)
+    console.log('données:', response.data)
+
+    jeux.value = Array.isArray(response.data) ? response.data : []
+  } catch (err) {
+    console.error('Erreur:', err)
+  }
+})
 </script>
