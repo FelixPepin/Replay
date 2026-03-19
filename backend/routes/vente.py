@@ -120,3 +120,15 @@ def supprimer(idVente):
     except mysql.connector.Error as err:
         current_app.logger.exception(err)
         return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500
+
+@bp_vente.route("/ventes", methods=['GET'])
+def getVentes():
+    ventes = []
+    try:
+        with bd.creer_connexion() as conn:
+            with conn.get_curseur() as curseur:
+                curseur.execute('SELECT * FROM ventes v JOIN utilisateurs u ON u.Id = v.VendeurId;')
+                ventes = curseur.fetchall()                    
+        return jsonify(ventes), 200
+    except mysql.connector.Error as error:
+        current_app.logger.exception(error)
