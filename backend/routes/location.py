@@ -107,3 +107,30 @@ def supprimer(id_location):
     except mysql.connector.Error as err:
         current_app.logger.exception(err)
         return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500
+    
+@bp_location.route("/modifierLocation/<int:id_location>", methods=['POST'])
+def modifier(id_location):
+    prix = request.form.get("prix","")
+    choixPaiement = request.form.get("choixPaiement","")
+    adresse = request.form.get("adresse","")
+    dateDebut = request.form.get("dateDebut", "")
+    dateFin = request.form.get("dateFin", "")
+
+    try:
+        with bd.creer_connexion() as conn:
+            with conn.get_curseur() as curseur:
+                curseur.execute("UPDATE locations SET Prix = %(prix)s, TypePaiement = %(choixPaiement)s" \
+                ", Adresse = %(adresse)s, DateDebut = %(dateDebut)s, DateFin = %(dateFin)s WHERE Id = %(idLocation)s",
+                {
+                    'prix' : prix,
+                    'choixPaiement': choixPaiement,
+                    'adresse': adresse,
+                    'dateDebut' : dateDebut,
+                    'dateFin' : dateFin,
+                    'idLocation': id_location
+                })
+            return jsonify({"succes": True}), 200
+
+    except mysql.connector.Error as error:
+        current_app.logger.exception(error)
+        return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500

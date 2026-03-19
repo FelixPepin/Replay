@@ -17,7 +17,6 @@
               <h2 class="card-title">Nom du jeu : {{ location.NomJeu }}</h2>
               <p class="card-text">Prix : {{ location.Prix }}$</p>
               <p class="card-text">Vendeur : {{ location.NomUtilisateur }}</p>
-              <p class="card-text">Livraison : {{ location.TypeLivraison }}</p>
               <p class="card-text">Adresse : {{location.Adresse}}</p>
               <p class="card-text">Début : {{ formatDate(location.DateDebut) }}</p>
               <p class="card-text">Fin : {{ formatDate(location.DateFin) }}</p>
