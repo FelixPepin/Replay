@@ -31,44 +31,10 @@ function deconnecter() {
         <a class="navbar-brand fw-bold fs-3 text-warning me-auto" href="/">RePlay</a>
 
         <div class="d-flex align-items-center">
+          <RouterLink to="/achat" class="nav-link text-white me-3 text-uppercase fw-bold">Acheter</RouterLink>
+          <RouterLink to="/louer" class="nav-link text-white me-3 text-uppercase fw-bold">Louer</RouterLink>
+          <RouterLink v-if="auth.role === 'vendeur'" to="/vendre" class="nav-link text-white me-3 text-uppercase fw-bold">Vendre</RouterLink>
 
-
-          <!-- Dropdown Ventes -->
-          <div class="dropdown me-3">
-            <button class="btn btn-link nav-link text-white dropdown-toggle p-0" type="button" data-bs-toggle="dropdown"
-              aria-expanded="false">
-              Ventes
-            </button>
-            <ul class="dropdown-menu dropdown-menu-dark">
-              <li v-if="auth.role === 'vendeur'">
-                <RouterLink to="/vendre" class="dropdown-item">Mettre en vente</RouterLink>
-              </li>
-              <li>
-                <RouterLink to="/achat" class="dropdown-item">Voir les ventes</RouterLink>
-              </li>
-              <li v-if="auth.role === 'vendeur'">
-                <RouterLink to="/mesVentes" class="dropdown-item">Mes ventes</RouterLink>
-              </li>
-            </ul>
-          </div>
-
-          <div class="dropdown me-3">
-            <button class="btn btn-link nav-link text-white dropdown-toggle p-0" type="button" data-bs-toggle="dropdown"
-              aria-expanded="false">
-              Locations
-            </button>
-            <ul class="dropdown-menu dropdown-menu-dark">
-              <li v-if="auth.role === 'vendeur'">
-                <RouterLink to="/mettreEnLocation" class="dropdown-item">Mettre en location</RouterLink>
-              </li>
-              <li>
-                <RouterLink to="/louer" class="dropdown-item">Voir les locations</RouterLink>
-              </li>
-              <li v-if="auth.role === 'vendeur'">
-                <RouterLink to="/mesLocations" class="dropdown-item">Mes locations</RouterLink>
-              </li>
-            </ul>
-          </div>
           <div class="ms-2 d-flex gap-2">
             <RouterLink v-if="!auth.estConnecte" to="/register" class="btn btn-outline-warning btn-sm">
               Inscription
