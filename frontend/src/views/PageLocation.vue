@@ -22,6 +22,7 @@
         <div class="row">
             <div v-for="jeu in jeuxTriees" :key="jeu.Id" class="col-lg-6 mb-3">
                 <div class="card h-100">
+                    <img class="card-img-top w-100" :src="`/static/images/ajouts/${jeu.Photo}`" />
                     <div class="card-body">
                         <h2 class="card-title h5">{{ jeu.NomJeu }}</h2>
                         <p class="card-text text-primary fw-bold">
