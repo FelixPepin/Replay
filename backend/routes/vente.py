@@ -127,8 +127,21 @@ def getVentes():
     try:
         with bd.creer_connexion() as conn:
             with conn.get_curseur() as curseur:
-                curseur.execute('SELECT * FROM ventes v JOIN utilisateurs u ON u.Id = v.VendeurId;')
+                curseur.execute('SELECT v.Id, v.NomJeu, v.Prix, v.Photo, v.TypePaiement, v.TypeLivraison, v.Adresse, v.VendeurId, v.TypeConsole,v.estVendu, u.NomUtilisateur FROM ventes v JOIN utilisateurs u ON v.VendeurId = u.Id')
                 ventes = curseur.fetchall()                    
         return jsonify(ventes), 200
     except mysql.connector.Error as error:
         current_app.logger.exception(error)
+        
+
+@bp_vente.route("/vente/<int:id_vente>/acheter", methods=['POST'])
+def acheterVente(id_vente):
+    try:
+        with bd.creer_connexion() as conn:
+            with conn.get_curseur() as curseur:
+                curseur.execute('UPDATE ventes SET estVendu = 1 WHERE Id = %s', (id_vente,))
+            conn.commit
+        return jsonify({"succes": True}), 200
+    except mysql.connector.Error as error:
+        current_app.logger.exception(error)
+        return jsonify({"erreur": "Erreur serveur"}), 500
