@@ -74,7 +74,7 @@ def vente(id_vente):
     try:
         with bd.creer_connexion() as conn:
             with conn.get_curseur() as curseur:
-                curseur.execute("SELECT NomJeu, Prix, Photo, TypePaiement, TypeLivraison, Adresse, VendeurId FROM ventes" \
+                curseur.execute("SELECT NomJeu, Prix, Photo, TypePaiement, TypeLivraison, Adresse, VendeurId,TypeConsole, estVendu FROM ventes" \
                 " WHERE Id = %(idVente)s",
                 {
                     'idVente' : id_vente
