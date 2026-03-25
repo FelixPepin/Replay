@@ -4,8 +4,7 @@
             <h1>Liste de jeux disponible en location</h1>
         </div>
 
-        <div class="d-flex justify-content-between align-items-center mb-4">
-
+        <div class="d-flex justify-content-between align-items-center mb-3">
             <div class="col-md-3">
                 <select v-model="tri" class="form-select">
                     <option value="alpha">Ordre alphabétique</option>
@@ -16,6 +15,53 @@
             <div class="col-md-4">
                 <input v-model="recherche" class="form-control me-2" type="search" placeholder="Nom du jeu"
                     aria-label="Search">
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center" style="cursor:pointer"
+                @click="filtresOuverts = !filtresOuverts">
+                <span class="fw-semibold">Filtres</span>
+                <span>{{ filtresOuverts ? '▲' : '▼' }}</span>
+            </div>
+            <div v-if="filtresOuverts" class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Console</label>
+                        <select v-model="filtreConsole" class="form-select">
+                            <option value="">Toutes</option>
+                            <option value="PS5">PS5</option>
+                            <option value="PS4">PS4</option>
+                            <option value="PS3">PS3</option>
+                            <option value="Xbox Series X">Xbox Series X</option>
+                            <option value="Xbox One">Xbox One</option>
+                            <option value="Xbox 360">Xbox 360</option>
+                            <option value="Nintendo Switch 2">Nintendo Switch 2</option>
+                            <option value="Nintendo Switch">Nintendo Switch</option>
+                            <option value="Wii U">Wii U</option>
+                            <option value="Wii">Wii</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Début disponibilité</label>
+                        <input v-model="filtreDateDebut" type="date" class="form-control">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Fin disponibilité</label>
+                        <input v-model="filtreDateFin" type="date" class="form-control">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Prix min ($)</label>
+                        <input v-model.number="filtrePrixMin" type="number" min="0" class="form-control" placeholder="0" @input="limiterDecimales($event, 'filtrePrixMin')">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Prix max ($)</label>
+                        <input v-model.number="filtrePrixMax" type="number" min="0" class="form-control" placeholder="∞" @input="limiterDecimales($event, 'filtrePrixMax')">
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button class="btn btn-outline-secondary w-100" @click="reinitialiserFiltres">Réinitialiser</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -31,6 +77,12 @@
                         <p class="card-text text-primary fw-bold">
                             <span class="text-black">Console : </span> {{ jeu.TypeConsole }}
                         </p>
+                        <p class="card-text text-primary fw-bold">
+                            <span class="text-black">Date début : </span> {{ formatDate(jeu.DateDebut) }}
+                        </p>
+                        <p class="card-text text-primary fw-bold">
+                            <span class="text-black">Date fin : </span> {{ formatDate(jeu.DateFin) }}
+                        </p>
                         <button class="btn btn-sm btn-success me-2">Louer</button>
                         <button class="btn btn-sm btn-success">Détails</button>
 
@@ -42,10 +94,42 @@
 </template>
 <script setup>
 import { computed, onMounted, ref } from 'vue';
+
+function formatDate(date) {
+    const d = new Date(date)
+    if (isNaN(d)) return date
+    const str = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())
+        .toLocaleDateString('fr-CA', { day: 'numeric', month: 'long', year: 'numeric' })
+    return str.charAt(0).toUpperCase() + str.slice(1)
+}
 import axios from 'axios'
 const tri = ref('alpha')
 const recherche = ref('')
 const jeux = ref([])
+const filtresOuverts = ref(false)
+const filtreConsole = ref('')
+const filtreDateDebut = ref('')
+const filtreDateFin = ref('')
+const filtrePrixMin = ref(null)
+const filtrePrixMax = ref(null)
+
+const limiterDecimales = (event, champ) => {
+    const val = event.target.value
+    if (val.includes('.') && val.split('.')[1].length > 2) {
+        const tronque = parseFloat(val).toFixed(2)
+        event.target.value = tronque
+        if (champ === 'filtrePrixMin') filtrePrixMin.value = parseFloat(tronque)
+        else filtrePrixMax.value = parseFloat(tronque)
+    }
+}
+
+const reinitialiserFiltres = () => {
+    filtreConsole.value = ''
+    filtreDateDebut.value = ''
+    filtreDateFin.value = ''
+    filtrePrixMin.value = null
+    filtrePrixMax.value = null
+}
 
 const jeuxTriees = computed(() => {
     let liste = [...jeux.value]
@@ -53,6 +137,26 @@ const jeuxTriees = computed(() => {
 
     if (recherche.value.trim() !== '')
         liste = liste.filter(jeu => jeu.NomJeu.toLowerCase().includes(recherche.value.toLowerCase()))
+
+    if (filtreConsole.value !== '')
+        liste = liste.filter(jeu => jeu.TypeConsole === filtreConsole.value)
+
+    if (filtreDateDebut.value !== '' || filtreDateFin.value !== '') {
+        const toLocalDate = d => { const dt = new Date(d); return new Date(dt.getFullYear(), dt.getMonth(), dt.getDate()) }
+        const debut = filtreDateDebut.value ? toLocalDate(filtreDateDebut.value) : new Date('0000-01-01')
+        const fin = filtreDateFin.value ? toLocalDate(filtreDateFin.value) : new Date('9999-12-31')
+        liste = liste.filter(jeu => {
+            const jeuDebut = toLocalDate(jeu.DateDebut)
+            const jeuFin = toLocalDate(jeu.DateFin)
+            return jeuDebut <= fin && jeuFin >= debut
+        })
+    }
+
+    if (filtrePrixMin.value !== null && filtrePrixMin.value !== '')
+        liste = liste.filter(jeu => jeu.Prix >= filtrePrixMin.value)
+
+    if (filtrePrixMax.value !== null && filtrePrixMax.value !== '')
+        liste = liste.filter(jeu => jeu.Prix <= filtrePrixMax.value)
 
     if (tri.value === 'alpha')
         return liste.sort((a, b) => a.NomJeu.localeCompare(b.NomJeu))
