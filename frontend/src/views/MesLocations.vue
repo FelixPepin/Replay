@@ -42,7 +42,10 @@ const locations = ref([])
 const erreurs = ref('')
 
 function formatDate(date) {
-  const str = new Date(date).toLocaleDateString('fr-CA', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+  const d = new Date(date)
+  if (isNaN(d)) return date
+  const str = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())
+      .toLocaleDateString('fr-CA', { day: 'numeric', month: 'long', year: 'numeric' })
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
 const auth = useAuthStore()
