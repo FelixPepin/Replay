@@ -8,6 +8,13 @@
     </div>
 
     <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="col-md-3">
+        <select v-model="tri" class="form-select">
+          <option value="alpha">Ordre alphabétique</option>
+          <option value="prix_asc">Prix croissant</option>
+          <option value="prix_desc">Prix décroissant</option>
+        </select>
+      </div>
       <div class="col-md-4">
         <input v-model="recherche" class="form-control me-2" type="search" placeholder="Nom du jeu" aria-label="Search">
       </div>
@@ -55,11 +62,13 @@
           </div>
           <div class="col-md-2">
             <label class="form-label">Prix min ($)</label>
-            <input v-model.number="filtrePrixMin" type="number" min="0" class="form-control" placeholder="0" @input="limiterDecimales($event, 'filtrePrixMin')">
+            <input v-model.number="filtrePrixMin" type="number" min="0" class="form-control" placeholder="0"
+              @input="limiterDecimales($event, 'filtrePrixMin')">
           </div>
           <div class="col-md-2">
             <label class="form-label">Prix max ($)</label>
-            <input v-model.number="filtrePrixMax" type="number" min="0" class="form-control" placeholder="∞" @input="limiterDecimales($event, 'filtrePrixMax')">
+            <input v-model.number="filtrePrixMax" type="number" min="0" class="form-control" placeholder="∞"
+              @input="limiterDecimales($event, 'filtrePrixMax')">
           </div>
           <div class="col-md-2 d-flex align-items-end">
             <button class="btn btn-outline-secondary w-100" @click="reinitialiserFiltres">Réinitialiser</button>
@@ -75,7 +84,7 @@
           <div class="card-body">
             <h2 class="card-title">Nom du jeu : {{ jeu.NomJeu }}</h2>
             <p class="card-text">Prix : {{ jeu.Prix }}$</p>
-            <p class="card-text">Console : {{jeu.TypeConsole}}</p>
+            <p class="card-text">Console : {{ jeu.TypeConsole }}</p>
             <p class="card-text">Vendeur : {{ jeu.NomUtilisateur }}</p>
             <p class="card-text">Livraison : {{ jeu.TypeLivraison }}</p>
             <p class="card-text">Paiement : {{ jeu.TypePaiement }}</p>
@@ -97,6 +106,7 @@ import axios from 'axios'
 import { useAuthStore } from '@/stores/auth';
 import { useNotifStore } from '@/stores/notif';
 const jeux = ref([])
+const tri = ref('alpha')
 const auth = useAuthStore()
 const notif = useNotifStore()
 const recherche = ref('')
@@ -146,6 +156,13 @@ const jeuxTriees = computed(() => {
 
   if (filtrePrixMax.value !== null && filtrePrixMax.value !== '')
     liste = liste.filter(jeu => jeu.Prix <= filtrePrixMax.value)
+
+  if (tri.value === 'alpha')
+    return liste.sort((a, b) => a.NomJeu.localeCompare(b.NomJeu))
+  else if (tri.value === 'prix_asc')
+    return liste.sort((a, b) => a.Prix - b.Prix)
+  else if (tri.value === 'prix_desc')
+    return liste.sort((a, b) => b.Prix - a.Prix)
 
   return liste
 })
