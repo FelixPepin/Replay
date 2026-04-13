@@ -7,6 +7,7 @@ from flask_cors import CORS
 from routes.authentification import bp_auth
 from routes.location import bp_location
 from routes.vente import bp_vente
+from routes.utilisateur import bp_users
 
 load_dotenv()
 
@@ -16,6 +17,7 @@ CORS(app)
 app.register_blueprint(bp_auth, url_prefix='/api')
 app.register_blueprint(bp_vente, url_prefix='/api')
 app.register_blueprint(bp_location, url_prefix='/api')
+app.register_blueprint(bp_users, url_prefix='/api')
 
 app.config['MORCEAUX_VERS_AJOUTS'] = ['static', 'images', 'ajouts']
 app.config['ROUTE_VERS_AJOUTS'] = "/".join(app.config['MORCEAUX_VERS_AJOUTS'])
