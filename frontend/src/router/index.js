@@ -15,6 +15,7 @@ import ModifierLocation from '@/views/ModifierLocation.vue'
 import PageAchatJeu from '@/views/PageAchatJeu.vue'
 import PageLouerJeu from '@/views/PageLouerJeu.vue'
 import PageGestionUser from '@/views/PageGestionUser.vue'
+import PagePaiementSucces from '@/views/PagePaiementSucces.vue'
 
 
 const router = createRouter({
@@ -100,7 +101,11 @@ const router = createRouter({
       path: '/users',
       name: 'userManager',
       component: PageGestionUser,
-
+    },
+    {
+      path: '/paiement/succes',
+      name: 'paiementSucces',
+      component: PagePaiementSucces,
     }
   ],
 })
