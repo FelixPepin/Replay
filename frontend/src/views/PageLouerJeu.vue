@@ -365,18 +365,39 @@ async function louer() {
   if (!dateDebutChoisie.value || !dateFinChoisie.value) return
 
   try {
-    const formData = new FormData()
-    formData.append('dateDebut', toStr(dateDebutChoisie.value))
-    formData.append('dateFin', toStr(dateFinChoisie.value))
-    formData.append('locataireId', auth.userId)
+    if (choixPaiement.value === 'En ligne') {
+      const res = await fetch('/api/paiement/checkout-location', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location_id: idLocation,
+          locataire_id: auth.userId,
+          nom_jeu: nomJeu.value,
+          prix_par_jour: prix.value,
+          date_debut: toStr(dateDebutChoisie.value),
+          date_fin: toStr(dateFinChoisie.value),
+        }),
+      })
+      const data = await res.json()
+      if (res.ok && data.url) {
+        window.location.href = data.url
+      } else {
+        console.error('Erreur création session Stripe:', data)
+      }
+    } else {
+      const formData = new FormData()
+      formData.append('dateDebut', toStr(dateDebutChoisie.value))
+      formData.append('dateFin', toStr(dateFinChoisie.value))
+      formData.append('locataireId', auth.userId)
 
-    const res = await fetch(`/api/reservation/${idLocation}`, {
-      method: 'POST',
-      body: formData,
-    })
-    if (res.ok) {
-      notif.setNotif('Jeu loué avec succès !')
-      router.push('/louer')
+      const res = await fetch(`/api/reservation/${idLocation}`, {
+        method: 'POST',
+        body: formData,
+      })
+      if (res.ok) {
+        notif.setNotif('Jeu loué avec succès !')
+        router.push('/louer')
+      }
     }
   } catch (e) {
     console.error('Erreur location : ', e)
