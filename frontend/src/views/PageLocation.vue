@@ -2,6 +2,9 @@
     <main class="container">
         <div class="container mt-5">
             <h1>Liste de jeux disponible en location</h1>
+                <div v-if="notif.message" :class="`alert alert-${notif.type}`">
+                    {{ notif.message }}
+                </div>
         </div>
 
         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -83,9 +86,12 @@
                         <p class="card-text text-primary fw-bold">
                             <span class="text-black">Date fin : </span> {{ formatDate(jeu.DateFin) }}
                         </p>
-                        <button class="btn btn-sm btn-success me-2">Louer</button>
-                        <button class="btn btn-sm btn-success">Détails</button>
-
+                        <RouterLink v-if="jeu.estDisponible !== 0" :to="`/louer/${jeu.Id}`" class="btn btn-success rounded-2">
+                            Louer
+                        </RouterLink>
+                        <button v-else class="btn btn-danger rounded-2" disabled>
+                            Indisponible
+                        </button>
                     </div>
                 </div>
             </div>
@@ -94,6 +100,7 @@
 </template>
 <script setup>
 import { computed, onMounted, ref } from 'vue';
+import { useNotifStore } from '@/stores/notif'
 
 function formatDate(date) {
     const d = new Date(date)
@@ -104,6 +111,7 @@ function formatDate(date) {
 }
 import axios from 'axios'
 const tri = ref('alpha')
+const notif = useNotifStore()
 const recherche = ref('')
 const jeux = ref([])
 const filtresOuverts = ref(false)
@@ -169,6 +177,7 @@ const jeuxTriees = computed(() => {
 })
 
 onMounted(async () => {
+    setTimeout(() => notif.clear(), 4000)
     try {
         const response = await axios.get('/api/locations')
         console.log('type:', typeof response.data)
@@ -179,4 +188,5 @@ onMounted(async () => {
         console.error('Erreur:', err)
     }
 })
+
 </script>
