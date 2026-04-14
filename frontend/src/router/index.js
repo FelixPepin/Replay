@@ -13,6 +13,7 @@ import MesLocations from '@/views/MesLocations.vue'
 import SupprimerLocation from '@/views/SupprimerLocation.vue'
 import ModifierLocation from '@/views/ModifierLocation.vue'
 import PageAchatJeu from '@/views/PageAchatJeu.vue'
+import PageGestionUser from '@/views/PageGestionUser.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -86,6 +87,11 @@ const router = createRouter({
       path: '/acheter/:id',
       name: 'acheterJeu',
       component: PageAchatJeu
+    },
+    {
+      path: '/users',
+      name: 'userManager',
+      component: PageGestionUser
     }
   ],
 })
