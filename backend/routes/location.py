@@ -85,9 +85,10 @@ def vente(id_location):
     try:
         with bd.creer_connexion() as conn:
             with conn.get_curseur() as curseur:
-                curseur.execute("SELECT NomJeu, Prix, Photo, TypePaiement, Adresse, LocateurId," \
-                " DateDebut, DateFin, EstLoue, TypeConsole FROM locations" \
-                " WHERE Id = %(idLocation)s",
+                curseur.execute("SELECT l.NomJeu, l.Prix, l.Photo, l.TypePaiement, l.Adresse, l.LocateurId," \
+                " l.DateDebut, l.DateFin, l.EstLoue, l.TypeConsole, u.NomUtilisateur, l.estDisponible" \
+                " FROM locations l JOIN utilisateurs u ON l.LocateurId = u.Id" \
+                " WHERE l.Id = %(idLocation)s",
                 {
                     'idLocation' : id_location
                 })
@@ -134,3 +135,4 @@ def modifier(id_location):
     except mysql.connector.Error as error:
         current_app.logger.exception(error)
         return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500
+    
