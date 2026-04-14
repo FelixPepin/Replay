@@ -79,10 +79,29 @@ onMounted(async () => {
 
 async function acheter() {
     try {
-        const res = await fetch(`/api/vente/${idVente}/acheter`, { method: 'POST' })
-        if (res.ok) {
-            notif.setNotif("Jeu acheté avec succès !")
-            router.push('/achat')
+        if (choixPaiement.value === 'En ligne') {
+            const res = await fetch('/api/paiement/checkout-achat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    vente_id: idVente,
+                    acheteur_id: auth.userId,
+                    nom_jeu: nomJeu.value,
+                    prix: prix.value,
+                }),
+            })
+            const data = await res.json()
+            if (res.ok && data.url) {
+                window.location.href = data.url
+            } else {
+                console.error('Erreur création session Stripe:', data)
+            }
+        } else {
+            const res = await fetch(`/api/vente/${idVente}/acheter`, { method: 'POST' })
+            if (res.ok) {
+                notif.setNotif("Jeu acheté avec succès !")
+                router.push('/achat')
+            }
         }
     } catch (e) {
         console.error('Erreur achat:', e)
