@@ -9,6 +9,7 @@ from routes.location import bp_location
 from routes.vente import bp_vente
 from routes.reservations import bp_reservation;
 from routes.utilisateur import bp_users
+from routes.paiement import bp_paiement
 
 
 load_dotenv()
@@ -21,6 +22,7 @@ app.register_blueprint(bp_vente, url_prefix='/api')
 app.register_blueprint(bp_location, url_prefix='/api')
 app.register_blueprint(bp_reservation, url_prefix='/api')
 app.register_blueprint(bp_users, url_prefix='/api')
+app.register_blueprint(bp_paiement, url_prefix='/api')
 
 
 app.config['MORCEAUX_VERS_AJOUTS'] = ['static', 'images', 'ajouts']
