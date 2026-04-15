@@ -91,6 +91,11 @@ function deconnecter() {
             <i class="fi fi-br-document"></i>
             Mes locations
           </RouterLink>
+          <p class="text-uppercase text-secondary small mb-1 mt-3">Évaluation</p>
+          <RouterLink to="/mesEvaluations" class="sidebar-link rounded text-decoration-none p-1">
+            <i class="fi fi-br-star"></i>
+            Évaluer un vendeur
+          </RouterLink>
         </template>
 
       </nav>
