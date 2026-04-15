@@ -99,6 +99,11 @@ async function acheter() {
         } else {
             const res = await fetch(`/api/vente/${idVente}/acheter`, { method: 'POST' })
             if (res.ok) {
+                const evalData = new FormData()
+                evalData.append('nomJeu', nomJeu.value)
+                evalData.append('vendeurId', vendeurId.value)
+                evalData.append('evaluateurId', auth.userId)
+                await fetch('/api/evaluation', { method: 'POST', body: evalData })
                 notif.setNotif("Jeu acheté avec succès !")
                 router.push('/achat')
             }
