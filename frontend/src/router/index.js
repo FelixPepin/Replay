@@ -16,6 +16,8 @@ import PageAchatJeu from '@/views/PageAchatJeu.vue'
 import PageLouerJeu from '@/views/PageLouerJeu.vue'
 import PageGestionUser from '@/views/PageGestionUser.vue'
 import PagePaiementSucces from '@/views/PagePaiementSucces.vue'
+import MesEvaluations from '@/views/MesEvaluations.vue'
+import PageEvaluation from '@/views/PageEvaluation.vue'
 
 
 const router = createRouter({
@@ -106,7 +108,18 @@ const router = createRouter({
       path: '/paiement/succes',
       name: 'paiementSucces',
       component: PagePaiementSucces,
+    },
+    {
+      path: '/mesEvaluations',
+      name: 'mesEvaluations',
+      component: MesEvaluations
+    },
+    {
+      path: '/evaluer/:idEvaluation',
+      name: 'evaluer',
+      component: PageEvaluation
     }
+
   ],
 })
 
