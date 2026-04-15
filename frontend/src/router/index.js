@@ -16,7 +16,9 @@ import PageAchatJeu from '@/views/PageAchatJeu.vue'
 import PageLouerJeu from '@/views/PageLouerJeu.vue'
 import PageGestionUser from '@/views/PageGestionUser.vue'
 import PagePaiementSucces from '@/views/PagePaiementSucces.vue'
-
+import PageQuestionForum from '@/views/PageQuestionForum.vue'
+import PageGestionForum from '@/views/PageGestionForum.vue'
+import QuestionDetails from '@/views/QuestionDetails.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -69,33 +71,32 @@ const router = createRouter({
     {
       path: '/louer',
       name: 'louer',
-      component: PageLocation
+      component: PageLocation,
     },
     {
       path: '/mesLocations',
       name: 'mesLocations',
-      component: MesLocations
+      component: MesLocations,
     },
     {
       path: '/supprimerLocation/:id',
       name: 'supprimerLocation',
-      component: SupprimerLocation
+      component: SupprimerLocation,
     },
     {
       path: '/modifierLocation/:id',
       name: 'modifierLocation',
-      component: ModifierLocation
+      component: ModifierLocation,
     },
     {
       path: '/acheter/:id',
       name: 'acheterJeu',
-      component: PageAchatJeu
+      component: PageAchatJeu,
     },
     {
-
       path: '/louer/:id',
       name: 'louerJeu',
-      component: PageLouerJeu
+      component: PageLouerJeu,
     },
     {
       path: '/users',
@@ -106,7 +107,22 @@ const router = createRouter({
       path: '/paiement/succes',
       name: 'paiementSucces',
       component: PagePaiementSucces,
-    }
+    },
+    {
+      path: '/forum',
+      name: 'forumQuestions',
+      component: PageQuestionForum,
+    },
+    {
+      path: '/manageForum',
+      name: 'forumManager',
+      component: PageGestionForum,
+    },
+    {
+      path: '/questions/:id',
+      name: 'question-detail',
+      component: QuestionDetails,
+    },
   ],
 })
 
