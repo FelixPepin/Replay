@@ -31,11 +31,12 @@ function deconnecter() {
         <a class="navbar-brand fw-bold fs-3 text-warning me-auto" href="/">RePlay</a>
 
         <div class="d-flex align-items-center">
-          <RouterLink v-if="auth.role === 'admin'" to="/users" class="nav-link text-white me-3 text-uppercase fw-bold">Utilisateurs</RouterLink>
+          <RouterLink v-if="auth.role === 'admin'" to="/manageForum" class="nav-link text-white me-3 text-uppercase fw-bold">Gestion du forum</RouterLink>
+          <RouterLink v-if="auth.role === 'admin'" to="/users" class="nav-link text-white me-3 text-uppercase fw-bold">Gestion des utilisateurs</RouterLink>
           <RouterLink to="/achat" class="nav-link text-white me-3 text-uppercase fw-bold">Acheter</RouterLink>
           <RouterLink to="/louer" class="nav-link text-white me-3 text-uppercase fw-bold">Louer</RouterLink>
+          <RouterLink to="/forum" class="nav-link text-white me-3 text-uppercase fw-bold">Forum</RouterLink>
           <RouterLink v-if="auth.role === 'vendeur'" to="/vendre" class="nav-link text-white me-3 text-uppercase fw-bold">Vendre</RouterLink>
-
           <div class="ms-2 d-flex gap-2">
             <RouterLink v-if="!auth.estConnecte" to="/register" class="btn btn-outline-warning btn-sm">
               Inscription
