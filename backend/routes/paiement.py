@@ -126,12 +126,24 @@ def confirmer_paiement():
     try:
         if type_paiement == "achat":
             vente_id = int(meta["vente_id"])
+            acheteur_id = int(meta["acheteur_id"])
             with bd.creer_connexion() as conn:
                 with conn.get_curseur() as curseur:
                     curseur.execute(
                         "UPDATE ventes SET estVendu = 1 WHERE Id = %s", (vente_id,)
                     )
-            return jsonify({"succes": True, "type": "achat"}), 200
+                with conn.get_curseur() as curseur:
+                    curseur.execute(
+                        "SELECT NomJeu, VendeurId FROM ventes WHERE Id = %s", (vente_id,)
+                    )
+                    vente = curseur.fetchone()
+            return jsonify({
+                "succes": True,
+                "type": "achat",
+                "nomJeu": vente["NomJeu"],
+                "vendeurId": vente["VendeurId"],
+                "evaluateurId": acheteur_id,
+            }), 200
 
         elif type_paiement == "location":
             location_id = int(meta["location_id"])
@@ -141,11 +153,25 @@ def confirmer_paiement():
             with bd.creer_connexion() as conn:
                 with conn.get_curseur() as curseur:
                     curseur.execute(
-                        "INSERT INTO reservations (LocationId, LocataireId, DateDebutReservation, DateFinReservation)"
+                        "INSERT INTO reservations_locations (LocationId, UtilisateurId, DateDebutReservation, DateFinReservation)"
                         " VALUES (%s, %s, %s, %s)",
                         (location_id, locataire_id, date_debut, date_fin),
                     )
-            return jsonify({"succes": True, "type": "location"}), 200
+                    curseur.execute(
+                        "UPDATE locations SET EstLoue = 1 WHERE Id = %s", (location_id,)
+                    )
+                with conn.get_curseur() as curseur:
+                    curseur.execute(
+                        "SELECT NomJeu, LocateurId FROM locations WHERE Id = %s", (location_id,)
+                    )
+                    location = curseur.fetchone()
+            return jsonify({
+                "succes": True,
+                "type": "location",
+                "nomJeu": location["NomJeu"],
+                "vendeurId": location["LocateurId"],
+                "evaluateurId": locataire_id,
+            }), 200
 
         else:
             return jsonify({"erreur": "Type de paiement inconnu"}), 400

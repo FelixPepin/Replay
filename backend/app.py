@@ -11,6 +11,7 @@ from routes.reservations import bp_reservation;
 from routes.utilisateur import bp_users
 from routes.paiement import bp_paiement
 from routes.forum import bp_forum
+from routes.evaluation import bp_evaluation
 
 
 load_dotenv()
@@ -24,7 +25,12 @@ app.register_blueprint(bp_location, url_prefix='/api')
 app.register_blueprint(bp_reservation, url_prefix='/api')
 app.register_blueprint(bp_users, url_prefix='/api')
 app.register_blueprint(bp_paiement, url_prefix='/api')
+<<<<<<< backend/app.py
 app.register_blueprint(bp_forum,url_prefix='/api')
+=======
+app.register_blueprint(bp_evaluation, url_prefix='/api')
+
+>>>>>>> backend/app.py
 
 
 app.config['MORCEAUX_VERS_AJOUTS'] = ['static', 'images', 'ajouts']

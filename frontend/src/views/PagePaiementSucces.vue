@@ -54,6 +54,11 @@ onMounted(async () => {
 
     if (res.ok && data.succes) {
       succes.value = true
+      const evalData = new FormData()
+      evalData.append('nomJeu', data.nomJeu)
+      evalData.append('vendeurId', data.vendeurId)
+      evalData.append('evaluateurId', data.evaluateurId)
+      await fetch('/api/evaluation', { method: 'POST', body: evalData })
       if (data.type === 'achat') {
         messageSucces.value = 'Votre achat a été confirmé. Bonne partie !'
         routeRetour.value = '/achat'

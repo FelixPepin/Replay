@@ -19,6 +19,9 @@ import PagePaiementSucces from '@/views/PagePaiementSucces.vue'
 import PageQuestionForum from '@/views/PageQuestionForum.vue'
 import PageGestionForum from '@/views/PageGestionForum.vue'
 import QuestionDetails from '@/views/QuestionDetails.vue'
+import MesEvaluations from '@/views/MesEvaluations.vue'
+import PageEvaluation from '@/views/PageEvaluation.vue'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -123,6 +126,16 @@ const router = createRouter({
       name: 'question-detail',
       component: QuestionDetails,
     },
+    {
+      path: '/mesEvaluations',
+      name: 'mesEvaluations',
+      component: MesEvaluations
+    },
+    {
+      path: '/evaluer/:idEvaluation',
+      name: 'evaluer',
+      component: PageEvaluation
+    }
   ],
 })
 
