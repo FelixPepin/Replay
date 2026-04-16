@@ -61,7 +61,13 @@ function deconnecter() {
         <span class="fw-bold fs-5 text-warning">Replay</span>
         <button @click="sidebarOuverte = false" class="btn text-white p-0 fs-4">✕</button>
       </div>
-      <nav class="d-flex flex-column flex-grow-1">
+      <nav class="d-flex flex-column flex-grow-1 sidebar-nav">
+
+        <p class="text-uppercase text-secondary small mb-1 mt-3">Quiz</p>
+        <RouterLink to="/quiz" class="sidebar-link rounded text-decoration-none p-1">
+          <i class="fi fi-br-gamepad"></i>
+          Quiz Jeux Vidéo
+        </RouterLink>
 
         <p class="text-uppercase text-secondary small mb-1 mt-3">Achat</p>
         <RouterLink to="/achat" class="sidebar-link rounded text-decoration-none p-1">
@@ -208,6 +214,11 @@ function deconnecter() {
 
 .sidebar-open {
   transform: translateX(0);
+}
+
+.sidebar-nav {
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .sidebar-overlay {
