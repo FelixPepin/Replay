@@ -147,12 +147,10 @@ function formatDate(dateStr) {
 
 .response-card {
     background: #1e293b;
-    /* Fond sombre pour contraster avec la carte blanche de la question */
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 16px;
     border-left: 4px solid #10b981;
-    /* Accent vert pour la "fiabilité" */
 }
 
 .coach-name {
