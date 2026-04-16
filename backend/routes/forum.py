@@ -196,6 +196,30 @@ def ajouter_reponse(id_question):
             nouvel_id = curseur.lastrowid
             return jsonify({"id": nouvel_id, "message": "Réponse publiée avec succès"}), 201
         
+@bp_forum.route('/questions/<int:id_question>/peut-repondre', methods=['GET'])
+def peut_repondre(id_question):
+    id_utilisateur = request.args.get('id_utilisateur', type=int)
+    if not id_utilisateur:
+        return jsonify({"autorise": False}), 200
+
+    with bd.creer_connexion() as conn:
+        with conn.get_curseur(dictionary=True) as curseur:
+            curseur.execute("SELECT idJeu FROM questions WHERE id = %s", (id_question,))
+            question = curseur.fetchone()
+            if not question:
+                return jsonify({"autorise": False}), 200
+
+            curseur.execute("""
+                SELECT COUNT(*) as cnt
+                FROM coach_jeux
+                JOIN utilisateurs ON utilisateurs.Id = coach_jeux.id_utilisateur
+                WHERE coach_jeux.id_utilisateur = %s
+                AND coach_jeux.id_jeu = %s
+                AND utilisateurs.role = 'coach'
+            """, (id_utilisateur, question['idJeu']))
+            result = curseur.fetchone()
+            return jsonify({"autorise": result['cnt'] > 0}), 200
+
 @bp_forum.route('/questions/<int:id_question>/reponses', methods=['GET'])
 def obtenir_reponses(id_question):
     with bd.creer_connexion() as conn:
