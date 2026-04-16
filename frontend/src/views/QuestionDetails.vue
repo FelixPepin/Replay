@@ -64,7 +64,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
@@ -75,12 +75,8 @@ const question = ref(null)
 const reponses = ref([])
 const nouvelleReponse = ref('')
 const chargement = ref(false)
+const peutRepondre = ref(false)
 
-const peutRepondre = computed(() => {
-    if (!auth.estConnecte || auth.role !== 'coach') return false
-    const idJeuQuestion = question.value?.idJeu
-    return auth.utilisateur?.mes_jeux_ids?.includes(idJeuQuestion)
-})
 onMounted(async () => {
     await chargerDonnees()
 })
@@ -92,6 +88,14 @@ async function chargerDonnees() {
 
         const resR = await fetch(`/api/questions/${route.params.id}/reponses`)
         if (resR.ok) reponses.value = await resR.json()
+
+        if (auth.estConnecte && auth.role === 'coach') {
+            const resAuth = await fetch(`/api/questions/${route.params.id}/peut-repondre?id_utilisateur=${auth.userId}`)
+            if (resAuth.ok) {
+                const data = await resAuth.json()
+                peutRepondre.value = data.autorise
+            }
+        }
     } catch (e) {
         console.error("Erreur chargement", e)
     }

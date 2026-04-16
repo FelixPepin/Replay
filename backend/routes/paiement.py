@@ -9,7 +9,7 @@ bp_paiement = Blueprint('paiement', __name__)
 
 stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
 
-FRONTEND_URL = "http://localhost:5173"
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5173")
 
 
 @bp_paiement.route("/paiement/checkout-achat", methods=['POST'])
