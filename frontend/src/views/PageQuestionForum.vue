@@ -1,5 +1,5 @@
 <template>
-    <main class="container">
+    <main class="container mt-3">
 
         <div class="page-header">
             <h1>Forum d'aide</h1>
@@ -14,7 +14,7 @@
                 <img :src="jeu.image" :alt="jeu.nom" class="jeu-image" />
                 <div class="jeu-info">
                     <h3>{{ jeu.nom }}</h3>
-                    <span class="question-count">{{ jeu.questions }} question(s)</span>
+                    <span class="question-count">{{ jeu.nbQuestions }} question(s)</span>
                 </div>
             </div>
         </div>
@@ -59,7 +59,7 @@
 
                         <div class="question-stats">
                             <div class="stat-box">
-                                <span class="stat-value">0</span>
+                                <span class="stat-value">{{ question.nbReponses }}</span>
                                 <span class="stat-label">Réponses</span>
                             </div>
                         </div>
@@ -402,6 +402,8 @@ function formatDate(dateStr) {
 .container {
     padding: 24px;
     font-family: sans-serif;
+    background-color: #fff;
+    border-radius: 20px;
 }
 
 .page-header {
@@ -457,18 +459,20 @@ function formatDate(dateStr) {
 
 .jeu-info {
     padding: 12px 14px;
+    background-color: black;
 }
 
 .jeu-info h3 {
     font-size: 14px;
     font-weight: 600;
-    color: #1a1d23;
+    color:#10b981;
     margin-bottom: 4px;
 }
 
 .question-count {
     font-size: 12px;
-    color: #9ba3b0;
+    color: dodgerblue;
+    font-weight: bolder;
 }
 
 .section-header {
