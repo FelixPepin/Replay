@@ -18,6 +18,7 @@ import PageGestionUser from '@/views/PageGestionUser.vue'
 import PagePaiementSucces from '@/views/PagePaiementSucces.vue'
 import MesEvaluations from '@/views/MesEvaluations.vue'
 import PageEvaluation from '@/views/PageEvaluation.vue'
+import QuizView from '@/views/QuizView.vue'
 
 
 const router = createRouter({
@@ -118,6 +119,11 @@ const router = createRouter({
       path: '/evaluer/:idEvaluation',
       name: 'evaluer',
       component: PageEvaluation
+    },
+    {
+      path: '/quiz',
+      name: 'quiz',
+      component: QuizView
     }
 
   ],
