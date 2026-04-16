@@ -75,7 +75,7 @@ function deconnecter() {
           <i class="fi fi-br-selling"></i>
           Acheter
         </RouterLink>
-        <template v-if="auth.estConnecte && auth.role === 'vendeur'">
+        <template v-if="auth.estConnecte && auth.role === 'vendeur' || auth.role === 'coach' || auth.role === 'admin'">
           <p class="text-uppercase text-secondary small mb-1 mt-3">Vendre</p>
           <RouterLink to="/vendre" class="sidebar-link rounded text-decoration-none p-1">
             <i class="fi fi-br-dollar"></i>
