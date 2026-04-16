@@ -12,10 +12,19 @@ def getJeux():
     try:
         with bd.creer_connexion() as conn:
             with conn.get_curseur(dictionary=True) as curseur:
-                curseur.execute('SELECT * FROM jeux')
+                query = """
+                    SELECT 
+                        j.*, 
+                        COUNT(q.id) as nbQuestions
+                    FROM jeux j
+                    LEFT JOIN questions q ON j.id = q.idJeu
+                    GROUP BY j.id
+                """
+                curseur.execute(query)
                 jeux = curseur.fetchall()
         return jsonify(jeux), 200
-    except mysql.connector.Error:
+    except mysql.connector.Error as e:
+        print(f"Erreur SQL Jeux : {e}")
         abort(500)
         
 @bp_forum.route("/jeux", methods=['POST'])
@@ -74,16 +83,22 @@ def getQuestionsParJeu(jeu_id):
         with bd.creer_connexion() as conn:
             with conn.get_curseur(dictionary=True) as curseur:
                 query = """
-                    SELECT q.*, u.NomUtilisateur as auteur 
+                    SELECT 
+                        q.*, 
+                        u.NomUtilisateur as auteur,
+                        COUNT(r.id) as nbReponses
                     FROM questions q
                     JOIN utilisateurs u ON q.idUtilisateur = u.Id
+                    LEFT JOIN reponses r ON q.id = r.idQuestion
                     WHERE q.idJeu = %s
+                    GROUP BY q.id
                     ORDER BY q.dateCreation DESC
                 """
                 curseur.execute(query, (jeu_id,))
                 questions = curseur.fetchall()
         return jsonify(questions), 200
-    except mysql.connector.Error:
+    except mysql.connector.Error as e:
+        print(f"Erreur SQL : {e}")
         abort(500)
 
 @bp_forum.route("/jeux/<int:jeu_id>/questions", methods=['POST'])
@@ -139,3 +154,76 @@ def get_detail_question(question_id):
         return jsonify(question), 200
     except Exception as e:
         return jsonify({"erreur": str(e)}), 500 
+    
+@bp_forum.route('/questions/<int:id_question>/reponses', methods=['POST'])
+def ajouter_reponse(id_question):
+    data = request.json
+    id_utilisateur = data.get('idUtilisateur')
+    contenu = data.get('contenu')
+
+    if not contenu or not id_utilisateur:
+        return jsonify({"erreurs": {"serveur": "Données incomplètes"}}), 400
+
+    with bd.creer_connexion() as conn:
+        with conn.get_curseur(dictionary=True) as curseur:
+            curseur.execute("SELECT idJeu FROM questions WHERE id = %s", (id_question,))
+            question = curseur.fetchone()
+            
+            if not question:
+                return jsonify({"erreurs": {"serveur": "Question introuvable"}}), 404
+
+            curseur.execute("""
+                SELECT COUNT(*) as autorisé 
+                FROM coach_jeux 
+                JOIN utilisateurs ON utilisateurs.id = coach_jeux.id_utilisateur
+                WHERE coach_jeux.id_utilisateur = %s 
+                AND coach_jeux.id_jeu = %s
+                AND utilisateurs.role = 'coach'
+            """, (id_utilisateur, question['idJeu']))
+            
+            check = curseur.fetchone()
+            
+            if check['autorisé'] == 0:
+                return jsonify({"erreurs": {"serveur": "Action interdite : vous n'êtes pas le coach assigné à ce jeu"}}), 403
+
+            curseur.execute("""
+                INSERT INTO reponses (contenu, idQuestion, idUtilisateur)
+                VALUES (%s, %s, %s)
+            """, (contenu, id_question, id_utilisateur))
+            
+            conn.commit()
+            
+            nouvel_id = curseur.lastrowid
+            return jsonify({"id": nouvel_id, "message": "Réponse publiée avec succès"}), 201
+        
+@bp_forum.route('/questions/<int:id_question>/reponses', methods=['GET'])
+def obtenir_reponses(id_question):
+    with bd.creer_connexion() as conn:
+        with conn.get_curseur(dictionary=True) as curseur:
+            curseur.execute("""
+                SELECT r.*, u.NomUtilisateur as auteur_nom 
+                FROM reponses r
+                JOIN utilisateurs u ON r.idUtilisateur = u.Id
+                WHERE r.idQuestion = %s
+                ORDER BY r.dateCreation ASC
+            """, (id_question,))
+            reponses = curseur.fetchall()
+            return jsonify(reponses), 200
+        
+@bp_forum.route("/questions/<int:id_question>", methods=['DELETE'])
+def supprimer_question(id_question):
+    try:
+        with bd.creer_connexion() as conn:
+            with conn.get_curseur() as curseur:
+                curseur.execute("DELETE FROM reponses WHERE idQuestion = %s", (id_question,))
+                
+                curseur.execute("DELETE FROM questions WHERE id = %s", (id_question,))
+                
+                if curseur.rowcount == 0:
+                    return jsonify({"erreurs": {"serveur": "Question introuvable"}}), 404
+                    
+                conn.commit()
+        return jsonify({"succes": True}), 200
+    except mysql.connector.Error as e:
+        print(f"Erreur suppression : {e}")
+        return jsonify({"erreurs": {"serveur": "Erreur SQL"}}), 500

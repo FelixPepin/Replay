@@ -59,10 +59,6 @@ def register():
                         'role' : 'vendeur'
                     }
                 )
-
-                # session['utilisateur_id'] = curseur.lastrowid
-                # session['courriel'] = email
-
                 current_app.logger.info(f"CRÉATION D'UN COMPTE : Utilisateur ID : {curseur.lastrowid} {email}")
                 token = jwt.encode({
                 'utilisateur_id': curseur.lastrowid,
@@ -80,45 +76,48 @@ def register():
         return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500
 
 
-@bp_auth.route("/login",methods=['POST','GET'])
+@bp_auth.route("/login", methods=['POST', 'GET'])
 def login():
-    """Permet la connexion d'un compte utilisateur valide"""
-    
     data = request.get_json()
-    
-    email = data.get("email","").strip()
+    email = data.get("email", "").strip()
     password = data.get("password", "")
     
     try:
         with bd.creer_connexion() as conn:
-            with conn.get_curseur() as curseur:
+            with conn.get_curseur(dictionary=True) as curseur:
                 curseur.execute('SELECT Id, NomUtilisateur, MotDePasse, Courriel, Role FROM utilisateurs WHERE courriel = %(courriel)s',
-                    {
-                            'courriel' : email
-                    }
-                                    
+                    {'courriel': email}
                 )
                 utilisateur = curseur.fetchone()
-    except mysql.connector.Error as err:
-            abort(500)
-            
-    if (utilisateur):
-        userBytes = password.encode('utf-8')
-        hash = utilisateur['MotDePasse'].encode('utf-8')
-        result  = bcrypt.checkpw(userBytes,hash)
-        
-        if (result):
-            token = jwt.encode({
-                'utilisateur_id': utilisateur['Id'],
-                'nomUtilisateur': utilisateur['NomUtilisateur'],
-                'courriel': utilisateur['Courriel'],
-                'role': utilisateur['Role'],
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)
-            }, current_app.secret_key, algorithm='HS256')
-            # current_app.logger.info(f"CONNEXION D'UN COMPTE : Utilisateur ID : {curseur.lastrowid} {email}")
-            # return jsonify({"succes": True}), 201
-            return jsonify({"token": token}), 200
+
+                if utilisateur:
+                    userBytes = password.encode('utf-8')
+                    hash_mdp = utilisateur['MotDePasse']
+                    if isinstance(hash_mdp, str):
+                        hash_mdp = hash_mdp.encode('utf-8')
+                        
+                    if bcrypt.checkpw(userBytes, hash_mdp):
+                        mes_jeux_ids = []
+                        if utilisateur['Role'] == 'coach':
+                            curseur.execute('SELECT id_jeu FROM coach_jeux WHERE id_utilisateur = %s', (utilisateur['Id'],))
+                            mes_jeux_ids = [row['id_jeu'] for row in curseur.fetchall()]
+
+                        token = jwt.encode({
+                            'utilisateur_id': utilisateur['Id'],
+                            'nomUtilisateur': utilisateur['NomUtilisateur'],
+                            'courriel': utilisateur['Courriel'],
+                            'role': utilisateur['Role'],
+                            'mes_jeux_ids': mes_jeux_ids,
+                            'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)
+                        }, current_app.secret_key, algorithm='HS256')
+
+                        return jsonify({"token": token}), 200
+
         return jsonify({"erreurs": {"general": "Courriel ou mot de passe invalide"}}), 401
+
+    except mysql.connector.Error as err:
+        current_app.logger.error(f"Erreur DB : {err}")
+        abort(500)
 
 
     

@@ -25,13 +25,8 @@ app.register_blueprint(bp_location, url_prefix='/api')
 app.register_blueprint(bp_reservation, url_prefix='/api')
 app.register_blueprint(bp_users, url_prefix='/api')
 app.register_blueprint(bp_paiement, url_prefix='/api')
-<<<<<<< backend/app.py
 app.register_blueprint(bp_forum,url_prefix='/api')
-=======
 app.register_blueprint(bp_evaluation, url_prefix='/api')
-
->>>>>>> backend/app.py
-
 
 app.config['MORCEAUX_VERS_AJOUTS'] = ['static', 'images', 'ajouts']
 app.config['ROUTE_VERS_AJOUTS'] = "/".join(app.config['MORCEAUX_VERS_AJOUTS'])
