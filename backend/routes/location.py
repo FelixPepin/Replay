@@ -9,7 +9,7 @@ bp_location = Blueprint('location',__name__)
 @bp_location.route("/location", methods=['POST'])
 def location():
     nomJeu = (request.form.get("nomJeu","")).strip()
-    prix = request.form.get("prix","")
+    prix_brut = request.form.get("prix","")
     typeConsole = request.form.get("typeConsole","")
     choixPaiement = request.form.get("choixPaiement","")
     adresse = request.form.get("adresse","")
@@ -18,6 +18,7 @@ def location():
     locateurId = request.form.get("locateurId","")
     photo = request.files.get("photo","")
     nomFichier = photo.filename
+    prix_float = round(float(prix_brut), 2) if prix_brut else None
 
     chemin_complet = os.path.join(current_app.config['CHEMIN_VERS_AJOUTS'], nomFichier)
     photo.save(chemin_complet)
@@ -30,7 +31,7 @@ def location():
                     ' %(Photo)s, %(TypeConsole)s, %(Paiement)s, %(Adresse)s, %(DateDebut)s, %(DateFin)s, %(LocateurId)s)',
                     {
                         'NomJeu' : nomJeu,
-                        'Prix' : prix,
+                        'Prix' : prix_float,
                         'Photo' : nomFichier,
                         'TypeConsole' : typeConsole,
                         'Paiement' : choixPaiement,
@@ -111,11 +112,12 @@ def supprimer(id_location):
     
 @bp_location.route("/modifierLocation/<int:id_location>", methods=['POST'])
 def modifier(id_location):
-    prix = request.form.get("prix","")
+    prix_brut = request.form.get("prix","")
     choixPaiement = request.form.get("choixPaiement","")
     adresse = request.form.get("adresse","")
     dateDebut = request.form.get("dateDebut", "")
     dateFin = request.form.get("dateFin", "")
+    prix_float = round(float(prix_brut), 2) if prix_brut else None
 
     try:
         with bd.creer_connexion() as conn:
@@ -123,7 +125,7 @@ def modifier(id_location):
                 curseur.execute("UPDATE locations SET Prix = %(prix)s, TypePaiement = %(choixPaiement)s" \
                 ", Adresse = %(adresse)s, DateDebut = %(dateDebut)s, DateFin = %(dateFin)s WHERE Id = %(idLocation)s",
                 {
-                    'prix' : prix,
+                    'prix' : prix_float,
                     'choixPaiement': choixPaiement,
                     'adresse': adresse,
                     'dateDebut' : dateDebut,

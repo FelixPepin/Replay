@@ -22,10 +22,17 @@ def register():
 
     if username == "":
         erreurs["username"] = "Le nom d'utilisateur est requis"
+    regex_courriel = r'^[\w.\-]+@([\w-]+\.)+[\w-]{2,4}$'
+    regex_mdp = r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*\-]).{8,}$'
+
     if email == "":
         erreurs["email"] = "L'adresse courriel est requise"
+    elif not re.match(regex_courriel, email):
+        erreurs["email"] = "L'adresse courriel doit avoir le format suivant (exemple@exemple.com)"
     if password == "":
         erreurs["password"] = "Le mot de passe est requis"
+    elif not re.match(regex_mdp, password):
+        erreurs["password"] = "Le mot de passe doit contenir huit caractères, au moins une minuscule, majuscule, un chiffre et un caractère spécial"
     if password != confirm:
         erreurs["confirm"] = "Les deux mots de passe doivent correspondre"
 
