@@ -19,7 +19,7 @@
           >
             <div class="mb-3">
               <label for="prix" class="form-label fw-bold">Prix</label>
-              <input v-model="prix" type="number" id="prix" name="prix" class="form-control" />
+              <input v-model="prix" type="number" step="0.01" id="prix" name="prix" class="form-control" />
             </div>
             <div class="mb-3">
               <fieldset>
