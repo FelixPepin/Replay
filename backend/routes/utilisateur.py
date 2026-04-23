@@ -117,7 +117,7 @@ def noter_evaluation(id_vendeur):
                 nouveauNbEvaluation = user['nbEvaluation'] + 1
                 nouvelleNote = (user['note'] * user['nbEvaluation'] + int(note)) / nouveauNbEvaluation
 
-                nouveauRole = 'utilisateur' if nouveauNbEvaluation > 3 and nouvelleNote < 3 else None
+                nouveauRole = 'client' if nouveauNbEvaluation > 3 and nouvelleNote < 3 else None
 
                 if nouveauRole:
                     curseur.execute(

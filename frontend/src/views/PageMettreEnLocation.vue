@@ -144,24 +144,26 @@ export default {
       console.log('AppelleMettreEnVente')
       Object.keys(erreurs).forEach((k) => delete erreurs[k])
 
-      if (nomJeu.value.trim().length < 3 || nomJeu.value.trim().length > 20)
-        erreurs.nomJeu = 'Le nom du jeu doit être entre 3 et 20 caractères'
       if (!nomJeu.value.trim()) erreurs.nomJeu = 'Le nom du jeu est requis'
+      else if (nomJeu.value.trim().length < 3 || nomJeu.value.trim().length > 20)
+        erreurs.nomJeu = 'Le nom du jeu doit être entre 3 et 20 caractères'
       if (!prix.value) erreurs.prix = 'Le prix du jeu est requis'
-      if (prix.value > 60) erreurs.prix = 'Un jeu en revente ne peut pas valoir plus de 60$'
+      else if (prix.value <= 0) erreurs.prix = 'Le prix doit être supérieur à 0$'
+      else if (prix.value > 60) erreurs.prix = 'Un jeu en location ne peut pas valoir plus de 60$'
       if (!photo.value) {
-        erreurs.photo = 'La photo du jeu est requis'
+        erreurs.photo = 'La photo du jeu est requise'
       } else {
         const nomFichier = photo.value.name
         const extension = nomFichier.split('.').pop().toUpperCase()
         const extensionPermis = ['JPG', 'JPEG', 'PNG', 'WEBP']
         if (!extensionPermis.includes(extension))
-          erreurs.photo = 'Seuls les fichier JPG, JPEG, PNG et WEBP sont acceptés'
+          erreurs.photo = 'Seuls les fichiers JPG, JPEG, PNG et WEBP sont acceptés'
       }
       if (!typeConsole.value) erreurs.typeConsole = 'Veuillez choisir le type de console'
       if (!choixPaiement.value)
         erreurs.choixPaiement = 'Veuillez choisir la méthode de paiement désirée'
-      if (!adresse.value) erreurs.adresse = "L'adresse est requise."
+      if (!adresse.value.trim()) erreurs.adresse = "L'adresse est requise."
+      else if (adresse.value.trim().length < 5) erreurs.adresse = "L'adresse doit contenir au moins 5 caractères"
       if (!dateDebut.value) erreurs.dateDebut = 'Veuillez entrez une date de début'
       if (dateDebut.value && dateDebut.value < new Date().toISOString().split('T')[0])
         erreurs.dateDebut = 'La date de début ne peut pas être dans le passé'
