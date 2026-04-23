@@ -19,7 +19,7 @@
           >
             <div class="mb-3">
               <label for="prix" class="form-label fw-bold">Prix</label>
-              <input v-model="prix" type="number" id="prix" name="prix" class="form-control" />
+              <input v-model="prix" type="number" step="0.01" id="prix" name="prix" class="form-control" />
             </div>
             <div class="mb-3">
               <fieldset>
@@ -126,11 +126,12 @@ async function modifierLocation() {
   Object.keys(erreurs).forEach((k) => delete erreurs[k])
 
   if (!prix.value) erreurs.prix = 'Le prix du jeu est requis'
-  if (prix.value > 60) erreurs.prix = 'Un jeu en revente ne peut pas valoir plus de 60$'
+  else if (prix.value <= 0) erreurs.prix = 'Le prix doit être supérieur à 0$'
+  else if (prix.value > 60) erreurs.prix = 'Un jeu en location ne peut pas valoir plus de 60$'
   if (!choixPaiement.value)
     erreurs.choixPaiement = 'Veuillez choisir la méthode de paiement désirée'
-  if (!adresse.value)
-    erreurs.adresse = "L'adresse est requise."
+  if (!adresse.value.trim()) erreurs.adresse = "L'adresse est requise."
+  else if (adresse.value.trim().length < 5) erreurs.adresse = "L'adresse doit contenir au moins 5 caractères"
   if (!dateDebut.value) erreurs.dateDebut = 'Veuillez entrez une date de début'
   if (dateDebut.value && dateDebut.value < new Date().toISOString().split('T')[0])
     erreurs.dateDebut = 'La date de début ne peut pas être dans le passé'

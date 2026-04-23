@@ -19,7 +19,7 @@
           >
             <div class="mb-3">
               <label for="prix" class="form-label fw-bold">Prix</label>
-              <input v-model="prix" type="number" id="prix" name="prix" class="form-control" />
+              <input v-model="prix" type="number" step="0.01" id="prix" name="prix" class="form-control" />
             </div>
             <div class="mb-3">
               <fieldset>
@@ -151,7 +151,8 @@ async function modifierVente() {
   Object.keys(erreurs).forEach((k) => delete erreurs[k])
 
   if (!prix.value) erreurs.prix = 'Le prix du jeu est requis'
-  if (prix.value > 60) erreurs.prix = 'Un jeu en revente ne peut pas valoir plus de 60$'
+  else if (prix.value <= 0) erreurs.prix = 'Le prix doit être supérieur à 0$'
+  else if (prix.value > 60) erreurs.prix = 'Un jeu en revente ne peut pas valoir plus de 60$'
   if (!choixPaiement.value)
     erreurs.choixPaiement = 'Veuillez choisir la méthode de paiement désirée'
   if (!choixLivraison.value)
