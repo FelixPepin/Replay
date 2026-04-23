@@ -38,8 +38,7 @@ function deconnecter() {
       <div class="navbar-links">
         <RouterLink to="/achat" class="navbar-link">Acheter</RouterLink>
         <RouterLink to="/louer" class="navbar-link">Louer</RouterLink>
-        <RouterLink v-if="auth.role === 'vendeur' || auth.role === 'coach' || auth.role === 'admin'" to="/vendre"
-          class="navbar-link">Vendre</RouterLink>
+        <RouterLink to="/quiz" class="navbar-link">Quiz</RouterLink>
         <RouterLink to="/forum" class="navbar-link">Forum</RouterLink>
       </div>
 
