@@ -31,11 +31,21 @@
                                             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                                         </svg>
                                     </button>
+                                    <button v-if="user.role !== 'admin' && user.id !== auth.id" class="btn-delete"
+                                        @click="supprimerUser(user)">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="3 6 5 6 21 6" />
+                                            <path d="M19 6l-1 14H6L5 6" />
+                                            <path d="M10 11v6" />
+                                            <path d="M14 11v6" />
+                                            <path d="M9 6V4h6v2" />
+                                        </svg>
+                                    </button>
                                 </div>
                             </td>
                         </tr>
                         <tr v-if="users.length === 0 && !erreurs">
-                            <td colspan="6" class="empty">Aucun utilisateur trouvé.</td>
+                            <td colspan="5" class="empty">Aucun utilisateur trouvé.</td>
                         </tr>
                     </tbody>
                 </table>
@@ -113,12 +123,12 @@ function ouvrirModal(user) {
 
 async function sauvegarderRole() {
 
-    if (userSelectionne.value.id === auth.id){
+    if (userSelectionne.value.id === auth.id) {
         erreurModal.value = "Vous ne pouvez pas changer votre propre rôle"
         return
     }
 
-    if (userSelectionne.value.role === 'admin'){
+    if (userSelectionne.value.role === 'admin') {
         erreurModal.value = "Vous ne pouvez pas modifier le rôle d'un admin"
         return
     }
@@ -149,6 +159,24 @@ async function sauvegarderRole() {
         erreurModal.value = 'Erreur lors de la sauvegarde'
     } finally {
         chargement.value = false
+    }
+}
+
+async function supprimerUser(user) {
+    if (user.id === auth.id) return
+    if (user.role === 'admin') return
+    if (!confirm(`Supprimer l'utilisateur "${user.nomUtilisateur}" ?`)) return
+
+    try {
+        const res = await fetch(`/api/users/${user.id}`, { method: 'DELETE' })
+        if (res.ok) {
+            users.value = users.value.filter(u => u.id !== user.id)
+        } else {
+            const data = await res.json()
+            erreurs.value = data?.erreurs?.serveur ?? 'Erreur lors de la suppression'
+        }
+    } catch (e) {
+        erreurs.value = 'Erreur lors de la suppression'
     }
 }
 </script>
