@@ -65,6 +65,7 @@
                             <option value="admin">Admin</option>
                             <option value="vendeur">Vendeur</option>
                             <option value="client">Client</option>
+                            <option value="coach">Coach</option>
                         </select>
                         <p v-if="erreurModal" class="erreur mt-2 mb-0">{{ erreurModal }}</p>
                     </div>
@@ -190,6 +191,11 @@ async function supprimerUser(user) {
 </script>
 
 <style scoped>
+
+.badge.coach {
+    background: #fef3c7;
+    color: #d97706;
+}
 .container {
     padding: 24px;
     font-family: sans-serif;
