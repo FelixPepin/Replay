@@ -76,7 +76,7 @@ def get_evaluation(id_evaluation):
         with bd.creer_connexion() as conn:
             with conn.get_curseur() as curseur:
                 curseur.execute(
-                    "SELECT e.Id, e.NomJeu, e.IdVendeur, u.NomUtilisateur"
+                    "SELECT e.Id, e.NomJeu, e.IdVendeur, u.NomUtilisateur, u.note, u.nbEvaluation"
                     " FROM evaluation e JOIN utilisateurs u ON e.IdVendeur = u.Id"
                     " WHERE e.Id = %(id)s",
                     {'id': id_evaluation}
