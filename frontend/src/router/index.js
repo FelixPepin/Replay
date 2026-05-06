@@ -148,7 +148,8 @@ const router = createRouter({
       path: '/profil',
       name: 'Profil',
       component : Profile
-    }
+    },
+    {
       path: '/erreur/:code',
       name: 'erreur',
       component: PageErreur,
