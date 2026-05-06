@@ -148,7 +148,7 @@ function deconnecter() {
     </aside>
     <div class="main-content d-flex flex-column">
       <RouterView />
-      <footer class="site-footer mt-5">
+      <footer class="site-footer">
         <div class="footer-inner">
 
           <div class="footer-brand">
