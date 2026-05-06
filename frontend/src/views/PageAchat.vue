@@ -5,11 +5,13 @@
       <div class="store-header-inner">
         <div>
           <h1 class="store-title">Jeux en vente</h1>
-          <p class="store-subtitle">{{ jeuxFiltrees.length }} jeu{{ jeuxFiltrees.length !== 1 ? 'x' : '' }} disponible{{ jeuxFiltrees.length !== 1 ? 's' : '' }}</p>
+          <p class="store-subtitle">{{ jeuxFiltrees.length }} jeu{{ jeuxFiltrees.length !== 1 ? 'x' : '' }} disponible{{
+            jeuxFiltrees.length !== 1 ? 's' : '' }}</p>
         </div>
         <div class="store-search-wrap">
           <svg class="search-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
           </svg>
           <input v-model="recherche" type="search" placeholder="Rechercher un jeu..." class="store-search" />
         </div>
@@ -91,53 +93,15 @@
 
         <div v-else-if="jeuxFiltrees.length === 0" class="état-vide">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
           </svg>
           <p>Aucun jeu trouvé.</p>
           <button class="reset-btn-lg" @click="reinitialiserFiltres">Réinitialiser les filtres</button>
         </div>
 
         <div v-else class="games-grid">
-          <div v-for="jeu in jeuxFiltrees" :key="jeu.Id" class="game-card">
-            <div class="game-img-wrap">
-              <img :src="`/static/images/ajouts/${jeu.Photo}`" :alt="jeu.NomJeu" class="game-img" />
-              <span class="game-console-badge">{{ jeu.TypeConsole }}</span>
-            </div>
-            <div class="game-body">
-              <h3 class="game-title">{{ jeu.NomJeu }}</h3>
-              <p class="game-seller">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                  <circle cx="12" cy="7" r="4"/>
-                </svg>
-                {{ jeu.NomUtilisateur }}
-              </p>
-              <div class="game-meta">
-                <span class="meta-tag">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                  </svg>
-                  {{ jeu.TypeLivraison }}
-                </span>
-                <span class="meta-tag">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="1" y="4" width="22" height="16" rx="2"/>
-                    <line x1="1" y1="10" x2="23" y2="10"/>
-                  </svg>
-                  {{ jeu.TypePaiement }}
-                </span>
-              </div>
-            </div>
-            <div class="game-footer">
-              <span class="game-price">{{ jeu.Prix }} $</span>
-              <RouterLink :to="`/acheter/${jeu.Id}`" class="btn-acheter">
-                Acheter
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
-              </RouterLink>
-            </div>
-          </div>
+          <JeuCard v-for="jeu in jeuxFiltrees" :key="jeu.Id" :jeu="jeu" mode="achat" />
         </div>
 
       </section>
@@ -151,6 +115,7 @@ import { computed, onMounted, ref } from 'vue'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/auth'
 import { useNotifStore } from '@/stores/notif'
+import JeuCard from '@/components/JeuCard.vue'
 
 const jeux = ref([])
 const chargement = ref(true)
@@ -223,7 +188,11 @@ onMounted(async () => {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap');
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
 .store-page {
   font-family: 'DM Sans', sans-serif;
@@ -232,7 +201,6 @@ onMounted(async () => {
   color: #1a1d23;
 }
 
-/* ── Header ── */
 .store-header {
   background: transparent;
   padding: 28px 0;
@@ -282,8 +250,8 @@ onMounted(async () => {
 
 .store-search {
   width: 100%;
-  background: rgba(255,255,255,0.7);
-  border: 1.5px solid rgba(255,255,255,0.5);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
   border-radius: 50px;
   padding: 10px 16px 10px 40px;
   font-family: inherit;
@@ -293,20 +261,36 @@ onMounted(async () => {
   backdrop-filter: blur(8px);
   transition: border-color 0.2s;
 }
-.store-search::placeholder { color: #6b7280; }
-.store-search:focus { border-color: #1a1d23; }
 
-/* ── Notif ── */
+.store-search::placeholder {
+  color: #6b7280;
+}
+
+.store-search:focus {
+  border-color: #1a1d23;
+}
+
 .notif-bar {
   padding: 12px 32px;
   font-size: 14px;
   font-weight: 500;
 }
-.notif-success { background: #dcfce7; color: #16a34a; }
-.notif-error   { background: #fee2e2; color: #ef4444; }
-.notif-info    { background: #dbeafe; color: #1d4ed8; }
 
-/* ── Layout ── */
+.notif-success {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.notif-error {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+.notif-info {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
 .store-body {
   max-width: 1400px;
   margin: 0 auto;
@@ -316,16 +300,15 @@ onMounted(async () => {
   align-items: flex-start;
 }
 
-/* ── Sidebar ── */
 .sidebar-filters {
   width: 240px;
   flex-shrink: 0;
-  background: rgba(255,255,255,0.75);
+  background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(10px);
   border-radius: 16px;
-  border: 1.5px solid rgba(255,255,255,0.6);
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
   padding: 20px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
   position: sticky;
   top: 20px;
 }
@@ -350,7 +333,10 @@ onMounted(async () => {
   font-family: inherit;
   font-weight: 500;
 }
-.reset-btn:hover { text-decoration: underline; }
+
+.reset-btn:hover {
+  text-decoration: underline;
+}
 
 .filter-group {
   margin-bottom: 16px;
@@ -366,7 +352,8 @@ onMounted(async () => {
   margin-bottom: 6px;
 }
 
-.filter-select, .filter-input {
+.filter-select,
+.filter-input {
   width: 100%;
   border: 1.5px solid #e2e6ed;
   border-radius: 10px;
@@ -378,18 +365,31 @@ onMounted(async () => {
   outline: none;
   transition: border-color 0.2s;
 }
-.filter-select:focus, .filter-input:focus { border-color: #6366f1; }
+
+.filter-select:focus,
+.filter-input:focus {
+  border-color: #6366f1;
+}
 
 .prix-range {
   display: flex;
   align-items: center;
   gap: 8px;
 }
-.prix-range .filter-input { flex: 1; }
-.prix-sep { color: #9ba3b0; font-size: 13px; }
 
-/* ── Grid ── */
-.games-grid-wrap { flex: 1; min-width: 0; }
+.prix-range .filter-input {
+  flex: 1;
+}
+
+.prix-sep {
+  color: #9ba3b0;
+  font-size: 13px;
+}
+
+.games-grid-wrap {
+  flex: 1;
+  min-width: 0;
+}
 
 .games-grid {
   display: grid;
@@ -397,130 +397,6 @@ onMounted(async () => {
   gap: 20px;
 }
 
-/* ── Card ── */
-.game-card {
-  background: rgba(255,255,255,0.85);
-  backdrop-filter: blur(8px);
-  border-radius: 16px;
-  border: 1.5px solid rgba(255,255,255,0.6);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
-}
-.game-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(99,102,241,0.15);
-  border-color: #6366f1;
-}
-
-.game-img-wrap {
-  position: relative;
-  height: 180px;
-  background: #f0f2f6;
-  overflow: hidden;
-}
-.game-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s;
-}
-.game-card:hover .game-img { transform: scale(1.04); }
-
-.game-console-badge {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background: rgba(26,29,35,0.85);
-  color: #fff;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 3px 10px;
-  border-radius: 50px;
-  backdrop-filter: blur(4px);
-}
-
-.game-body {
-  padding: 14px 16px 10px;
-  flex: 1;
-}
-
-.game-title {
-  font-family: 'Syne', sans-serif;
-  font-size: 15px;
-  font-weight: 700;
-  color: #1a1d23;
-  margin-bottom: 6px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.game-seller {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 12.5px;
-  color: #6b7280;
-  margin-bottom: 10px;
-}
-.game-seller svg { width: 13px; height: 13px; flex-shrink: 0; }
-
-.game-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.meta-tag {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  background: #f4f5f7;
-  border: 1px solid #e8eaf0;
-  border-radius: 50px;
-  padding: 3px 10px;
-  font-size: 11.5px;
-  color: #4b5263;
-  font-weight: 500;
-}
-.meta-tag svg { width: 11px; height: 11px; }
-
-.game-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 16px;
-  border-top: 1px solid #f0f2f6;
-}
-
-.game-price {
-  font-family: 'Syne', sans-serif;
-  font-size: 18px;
-  font-weight: 700;
-  color: #1a1d23;
-}
-
-.btn-acheter {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: #1a1d23;
-  color: #fff;
-  text-decoration: none;
-  font-size: 13px;
-  font-weight: 600;
-  padding: 8px 16px;
-  border-radius: 50px;
-  transition: background 0.2s;
-  font-family: inherit;
-}
-.btn-acheter svg { width: 13px; height: 13px; }
-.btn-acheter:hover { background: #6366f1; }
-
-/* ── États vides ── */
 .état-vide {
   display: flex;
   flex-direction: column;
@@ -530,8 +406,15 @@ onMounted(async () => {
   gap: 16px;
   color: #9ba3b0;
 }
-.état-vide svg { width: 48px; height: 48px; }
-.état-vide p { font-size: 15px; }
+
+.état-vide svg {
+  width: 48px;
+  height: 48px;
+}
+
+.état-vide p {
+  font-size: 15px;
+}
 
 .spinner {
   width: 36px;
@@ -541,7 +424,12 @@ onMounted(async () => {
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 .reset-btn-lg {
   background: #1a1d23;
@@ -555,13 +443,30 @@ onMounted(async () => {
   cursor: pointer;
   transition: background 0.2s;
 }
-.reset-btn-lg:hover { background: #6366f1; }
 
-/* ── Responsive ── */
+.reset-btn-lg:hover {
+  background: #6366f1;
+}
+
 @media (max-width: 768px) {
-  .store-body { flex-direction: column; padding: 16px; }
-  .sidebar-filters { width: 100%; position: static; }
-  .store-header-inner { flex-direction: column; align-items: flex-start; }
-  .store-search-wrap { max-width: 100%; width: 100%; }
+  .store-body {
+    flex-direction: column;
+    padding: 16px;
+  }
+
+  .sidebar-filters {
+    width: 100%;
+    position: static;
+  }
+
+  .store-header-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .store-search-wrap {
+    max-width: 100%;
+    width: 100%;
+  }
 }
 </style>
