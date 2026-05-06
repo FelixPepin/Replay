@@ -137,12 +137,13 @@ onMounted(async () => {
       photo.value = data.Photo
       nomJeu.value = data.NomJeu
       vendeurId.value = data.VendeurId
+    } else if (res.status >= 500) {
+      router.push('/erreur/500')
     } else {
-      erreurs.value = data?.erreurs?.serveur ?? 'Erreur lors du chargement'
+      erreurs.serveur = data?.erreurs?.serveur ?? 'Erreur lors du chargement'
     }
   } catch (e) {
-    erreurs.value = data?.erreurs?.serveur ?? 'Erreur lors du chargement'
-    return
+    router.push('/erreur/500')
   }
 })
 
@@ -180,11 +181,15 @@ async function modifierVente() {
     if (reponse.ok) {
       notif.setNotif('Vente modifiée avec succès')
       router.push('/mesVentes')
+    } else if (reponse.status === 405) {
+      router.push('/erreur/405')
+    } else if (reponse.status >= 500) {
+      router.push('/erreur/500')
     } else {
       Object.assign(erreurs, data.erreurs)
     }
   } catch (e) {
-    erreurs.serveur = 'Impossible de contacter le serveur'
+    router.push('/erreur/500')
   }
 }
 </script>

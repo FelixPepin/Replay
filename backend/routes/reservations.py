@@ -1,4 +1,4 @@
-from flask import request, Blueprint, abort, jsonify, current_app
+from flask import request, Blueprint, jsonify, current_app
 import mysql.connector
 import bd
 import os
@@ -21,8 +21,8 @@ def getReservations(id_location):
                 })
                 reservations = curseur.fetchall()
     except mysql.connector.Error as err:
-        print(err)
-        abort(500)
+        current_app.logger.exception(err)
+        return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500
     return jsonify(reservations)
 
 @bp_reservation.route("/reservation/<int:id_location>", methods=['POST'])
@@ -95,5 +95,5 @@ def creerReservation(id_location):
 
         return jsonify({"succes": True}), 201
     except mysql.connector.Error as err:
-        print(err)
-        abort(500)
+        current_app.logger.exception(err)
+        return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500
