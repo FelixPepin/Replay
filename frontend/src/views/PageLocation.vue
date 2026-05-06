@@ -143,7 +143,7 @@ const jeuxTriees = computed(() => {
     let liste = [...jeux.value]
     if (liste.length === 0) return []
 
-    liste = liste.filter(jeu => jeu.estDisponible !== 0)
+    liste = liste.filter(jeu => jeu.estDisponible !== 0 && jeu.LocateurId !== auth.userId)
 
     if (recherche.value.trim() !== '')
         liste = liste.filter(jeu => jeu.NomJeu.toLowerCase().includes(recherche.value.toLowerCase()))
