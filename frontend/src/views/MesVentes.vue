@@ -36,10 +36,12 @@
 import { useAuthStore } from '@/stores/auth'
 import { useNotifStore } from '@/stores/notif'
 import { ref, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
 const ventes = ref([])
 const erreurs = ref('')
 const auth = useAuthStore()
 const notif = useNotifStore()
+const router = useRouter()
 
 onUnmounted(() => notif.clear())
 
@@ -49,12 +51,13 @@ onMounted(async () => {
     const data = await res.json()
     if (res.ok) {
       ventes.value = data
+    } else if (res.status >= 500) {
+      router.push('/erreur/500')
     } else {
       erreurs.value = data?.erreurs?.serveur ?? 'Erreur lors du chargement'
     }
   } catch (e) {
-    erreurs.value = data?.erreurs?.serveur ?? 'Erreur lors du chargement'
-    return
+    router.push('/erreur/500')
   }
 })
 </script>

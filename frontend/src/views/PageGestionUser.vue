@@ -84,11 +84,12 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useNotifStore } from '@/stores/notif'
+import { useRouter } from 'vue-router'
 import { Modal } from 'bootstrap'
-
 
 const auth = useAuthStore()
 const notif = useNotifStore()
+const router = useRouter()
 const users = ref([])
 const erreurs = ref('')
 
@@ -99,6 +100,11 @@ const chargement = ref(false)
 let modalInstance = null
 
 onMounted(async () => {
+    if (auth.role !== 'admin') {
+        router.push('/erreur/403')
+        return
+    }
+
     modalInstance = new Modal(document.getElementById('editModal'))
 
     try {
@@ -106,11 +112,13 @@ onMounted(async () => {
         const data = await res.json()
         if (res.ok) {
             users.value = data
+        } else if (res.status >= 500) {
+            router.push('/erreur/500')
         } else {
             erreurs.value = data?.erreurs?.serveur ?? 'Erreur lors du chargement'
         }
     } catch (e) {
-        erreurs.value = 'Erreur lors du chargement'
+        router.push('/erreur/500')
     }
 })
 
@@ -156,7 +164,7 @@ async function sauvegarderRole() {
             erreurModal.value = data?.erreurs?.serveur ?? 'Erreur lors de la sauvegarde'
         }
     } catch (e) {
-        erreurModal.value = 'Erreur lors de la sauvegarde'
+        router.push('/erreur/500')
     } finally {
         chargement.value = false
     }
