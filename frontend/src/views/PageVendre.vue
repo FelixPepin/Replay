@@ -2,7 +2,7 @@
   <main>
     <div class="container mt-2">
       <div class="row">
-        <div v-if="auth.role === 'vendeur'" class="col-mb-3">
+        <div v-if="['vendeur', 'admin', 'coach'].includes(auth.role)" class="col-mb-3">
           <h1 class="mb-4">Mettre un jeu en vente</h1>
           <div v-if="Object.keys(erreurs).length" class="alert alert-danger">
             <ul class="mb-0">
@@ -142,7 +142,7 @@
 </template>
 
 <script>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useNotifStore } from '@/stores/notif'
@@ -151,6 +151,12 @@ export default {
     const auth = useAuthStore()
     const notif = useNotifStore()
     const router = useRouter()
+
+    onMounted(() => {
+      if (!['vendeur', 'admin', 'coach'].includes(auth.role)) {
+        router.replace(auth.estConnecte ? '/erreur/403' : '/erreur/401')
+      }
+    })
 
     const vuePhoto = ref(null)
     const nomJeu = ref('')
