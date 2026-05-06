@@ -334,9 +334,13 @@ onMounted(async () => {
       if (debutLoc) {
         moisAffiche.value = { annee: debutLoc.getFullYear(), mois: debutLoc.getMonth() }
       }
+    } else if (res.status >= 500) {
+      router.push('/erreur/500')
+      return
     }
   } catch (e) {
-    console.error('Erreur chargement jeu:', e)
+    router.push('/erreur/500')
+    return
   }
 
   try {
@@ -381,8 +385,10 @@ async function louer() {
       const data = await res.json()
       if (res.ok && data.url) {
         window.location.href = data.url
+      } else if (res.status >= 500) {
+        router.push('/erreur/500')
       } else {
-        console.error('Erreur création session Stripe:', data)
+        notif.setNotif('Erreur lors de la création du paiement', 'danger')
       }
     } else {
       const formData = new FormData()
@@ -402,10 +408,16 @@ async function louer() {
         await fetch('/api/evaluation', { method: 'POST', body: evalData })
         notif.setNotif('Jeu loué avec succès !')
         router.push('/louer')
+      } else if (res.status === 400) {
+        notif.setNotif('Dates invalides ou champs manquants.', 'danger')
+      } else if (res.status === 405) {
+        router.push('/erreur/405')
+      } else if (res.status >= 500) {
+        router.push('/erreur/500')
       }
     }
   } catch (e) {
-    console.error('Erreur location : ', e)
+    router.push('/erreur/500')
   }
 }
 </script>

@@ -34,7 +34,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useNotifStore } from '@/stores/notif'
@@ -52,6 +52,7 @@ const choixLivraison = ref('')
 const adresse = ref('')
 const vendeurId = ref('')
 const photo = ref('')
+const erreurs = reactive({})
 
 onMounted(async () => {
   try {
@@ -65,12 +66,13 @@ onMounted(async () => {
       nomJeu.value = data.NomJeu
       vendeurId.value = data.VendeurId
       photo.value = data.Photo
+    } else if (res.status >= 500) {
+      router.push('/erreur/500')
     } else {
-      erreurs.value = data?.erreurs?.serveur ?? 'Erreur lors du chargement'
+      erreurs.serveur = data?.erreurs?.serveur ?? 'Erreur lors du chargement'
     }
   } catch (e) {
-    erreurs.value = data?.erreurs?.serveur ?? 'Erreur lors du chargement'
-    return
+    router.push('/erreur/500')
   }
 })
 
@@ -85,11 +87,13 @@ async function supprimerVente() {
     if (reponse.ok) {
       notif.setNotif('Vente supprimée avec succès')
       router.push('/mesVentes')
+    } else if (reponse.status >= 500) {
+      router.push('/erreur/500')
     } else {
       Object.assign(erreurs, data.erreurs)
     }
   } catch (e) {
-    erreurs.serveur = 'Impossible de contacter le serveur'
+    router.push('/erreur/500')
   }
 }
 </script>
