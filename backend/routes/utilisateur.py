@@ -95,7 +95,6 @@ def promouvoir_coach(id):
         abort(500)
 
 
-# Permet de changer la note d'un vendeur après une évaluation
 @bp_users.route("/evaluer/<int:id_vendeur>", methods=['PUT'])
 def noter_evaluation(id_vendeur):
     note = request.json.get('note')
@@ -138,6 +137,9 @@ def noter_evaluation(id_vendeur):
     
 @bp_users.route("/profil/nom", methods=['PATCH'])
 def modifierNom():
+    utilisateur = get_utilisateur_connecte()
+    id_utilisateur = utilisateur['utilisateur_id']
+
     donnees = request.get_json()
     nom = donnees.get('nomUtilisateur', '').strip()
 
@@ -146,19 +148,36 @@ def modifierNom():
 
     try:
         with bd.creer_connexion() as conn:
-            with conn.get_curseur() as curseur:
+            with conn.get_curseur(dictionary=True) as curseur:
                 curseur.execute(
                     'UPDATE utilisateurs SET nomUtilisateur = %s WHERE id = %s',
-                    (nom, session['id'])
+                    (nom, id_utilisateur)
                 )
+                curseur.execute(
+                    'SELECT id, nomUtilisateur, courriel, role FROM utilisateurs WHERE id = %s',
+                    (id_utilisateur,)
+                )
+                user = curseur.fetchone()
             conn.commit()
-        return jsonify({"succes": True}), 200
+
+        token = jwt.encode({
+            'utilisateur_id': user['id'],
+            'nomUtilisateur': user['nomUtilisateur'],
+            'courriel': user['courriel'],
+            'role': user['role'],
+            'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=24)
+        }, current_app.secret_key, algorithm='HS256')
+
+        return jsonify({"succes": True, "token": token}), 200
     except mysql.connector.Error:
         abort(500)
 
 
 @bp_users.route("/profil/motdepasse", methods=['PATCH'])
 def modifierMotDePasse():
+    utilisateur = get_utilisateur_connecte()
+    id_utilisateur = utilisateur['utilisateur_id']
+
     donnees = request.get_json()
     actuel = donnees.get('actuel', '')
     nouveau = donnees.get('nouveau', '')
@@ -169,7 +188,7 @@ def modifierMotDePasse():
     try:
         with bd.creer_connexion() as conn:
             with conn.get_curseur(dictionary=True) as curseur:
-                curseur.execute('SELECT motDePasse FROM utilisateurs WHERE id = %s', (session['id'],))
+                curseur.execute('SELECT motDePasse FROM utilisateurs WHERE id = %s', (id_utilisateur,))
                 user = curseur.fetchone()
 
                 if not bcrypt.checkpw(actuel.encode(), user['motDePasse'].encode()):
@@ -178,7 +197,7 @@ def modifierMotDePasse():
                 hash_nouveau = bcrypt.hashpw(nouveau.encode(), bcrypt.gensalt()).decode()
                 curseur.execute(
                     'UPDATE utilisateurs SET motDePasse = %s WHERE id = %s',
-                    (hash_nouveau, session['id'])
+                    (hash_nouveau, id_utilisateur)
                 )
             conn.commit()
         return jsonify({"succes": True}), 200
@@ -188,21 +207,37 @@ def modifierMotDePasse():
 
 @bp_users.route("/profil", methods=['DELETE'])
 def supprimerCompte():
+    utilisateur = get_utilisateur_connecte()
+    id_utilisateur = utilisateur['utilisateur_id']
+
     donnees = request.get_json()
     mot_de_passe = donnees.get('motDePasse', '')
 
     try:
         with bd.creer_connexion() as conn:
             with conn.get_curseur(dictionary=True) as curseur:
-                curseur.execute('SELECT motDePasse FROM utilisateurs WHERE id = %s', (session['id'],))
+                curseur.execute('SELECT motDePasse FROM utilisateurs WHERE id = %s', (id_utilisateur,))
                 user = curseur.fetchone()
 
                 if not bcrypt.checkpw(mot_de_passe.encode(), user['motDePasse'].encode()):
                     return jsonify({"erreurs": {"motDePasse": "Mot de passe incorrect"}}), 400
 
-                curseur.execute('DELETE FROM utilisateurs WHERE id = %s', (session['id'],))
+                curseur.execute('DELETE FROM utilisateurs WHERE id = %s', (id_utilisateur,))
             conn.commit()
-        session.clear()
         return jsonify({"succes": True}), 200
     except mysql.connector.Error:
         abort(500)
+        
+def get_utilisateur_connecte():
+    """Décode le token JWT et retourne le payload"""
+    auth_header = request.headers.get('Authorization', '')
+    if not auth_header.startswith('Bearer '):
+        abort(401)
+    token = auth_header.split(' ')[1]
+    try:
+        payload = jwt.decode(token, current_app.secret_key, algorithms=['HS256'])
+        return payload
+    except jwt.ExpiredSignatureError:
+        abort(401)
+    except jwt.InvalidTokenError:
+        abort(401)

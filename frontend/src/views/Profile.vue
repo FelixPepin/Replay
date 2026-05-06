@@ -5,8 +5,15 @@
             <h1 class="page-title">Mon profil</h1>
         </div>
 
-        <p v-if="erreurs.general" class="erreur">{{ erreurs.general }}</p>
-        <p v-if="succes" class="succes">{{ succes }}</p>
+        <div v-if="erreurs.general" class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ erreurs.general }}
+            <button type="button" class="btn-close" @click="erreurs.general = ''"></button>
+        </div>
+
+        <div v-if="succes" class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ succes }}
+            <button type="button" class="btn-close" @click="succes = ''"></button>
+        </div>
 
         <div class="table-wrapper">
             <div class="profil-section">
@@ -14,7 +21,7 @@
                 <div class="profil-info">
                     <div class="avatar-cercle">{{ auth.initiales }}</div>
                     <div>
-                        <div class="profil-nom">{{ auth.nomUtilisateur }}</div>
+                        <div class="profil-nom">{{ auth.nom }}</div>
                         <div class="profil-role">{{ auth.role }}</div>
                     </div>
                 </div>
@@ -100,7 +107,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useNotifStore } from '@/stores/notif'
 import { useRouter } from 'vue-router'
@@ -125,8 +132,13 @@ onUnmounted(() => notif.clear())
 
 onMounted(() => {
     modalInstance = new Modal(document.getElementById('suppressionModal'))
-    formNom.value.nomUtilisateur = auth.nomUtilisateur
 })
+
+watch(() => auth.nom, (nouvelleValeur) => {
+    if (nouvelleValeur) {
+        formNom.value.nomUtilisateur = nouvelleValeur
+    }
+}, { immediate: true })
 
 async function modifierNom() {
     erreurs.value = {}
@@ -136,7 +148,7 @@ async function modifierNom() {
         erreurs.value.nomUtilisateur = 'Le nom d\'utilisateur est obligatoire.'
         return
     }
-    if (formNom.value.nomUtilisateur === auth.nomUtilisateur) {
+    if (formNom.value.nomUtilisateur === auth.nom) {
         erreurs.value.nomUtilisateur = 'Le nom est identique à l\'actuel.'
         return
     }
@@ -145,12 +157,12 @@ async function modifierNom() {
     try {
         const res = await fetch('/api/profil/nom', {
             method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` },
             body: JSON.stringify({ nomUtilisateur: formNom.value.nomUtilisateur })
         })
         const data = await res.json()
         if (res.ok) {
-            auth.nomUtilisateur = formNom.value.nomUtilisateur  // mise à jour dans le store
+            auth.connecter(data.token)
             succes.value = 'Nom d\'utilisateur modifié avec succès.'
         } else {
             erreurs.value = data?.erreurs ?? { general: 'Erreur lors de la modification' }
@@ -183,7 +195,7 @@ async function modifierMdp() {
     try {
         const res = await fetch('/api/profil/motdepasse', {
             method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` },
             body: JSON.stringify({
                 actuel: formMdp.value.actuel,
                 nouveau: formMdp.value.nouveau
@@ -221,7 +233,7 @@ async function supprimerCompte() {
     try {
         const res = await fetch('/api/profil', {
             method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` },
             body: JSON.stringify({ motDePasse: motDePasseConfirmation.value })
         })
         const data = await res.json()
@@ -256,18 +268,6 @@ async function supprimerCompte() {
     font-size: 22px;
     font-weight: 700;
     color: #1a1d23;
-}
-
-.erreur {
-    color: #ef4444;
-    margin-bottom: 12px;
-    font-size: 14px;
-}
-
-.succes {
-    color: #16a34a;
-    margin-bottom: 12px;
-    font-size: 14px;
 }
 
 .erreur-champ {
@@ -424,5 +424,37 @@ async function supprimerCompte() {
 
 :deep(.modal-content) {
     background-color: #fff;
+    color: #1a1d23;
+}
+
+:deep(.modal-header) {
+    border-bottom: 1px solid #f0f2f6;
+}
+
+:deep(.modal-footer) {
+    border-top: 1px solid #f0f2f6;
+}
+
+:deep(.modal-title) {
+    color: #1a1d23;
+    font-weight: 600;
+}
+
+:deep(.modal-body p) {
+    color: #4b5263;
+    font-size: 14px;
+}
+
+:deep(.modal-body .form-control) {
+    background-color: #fff;
+    color: #1a1d23;
+    border: 1.5px solid #e2e6ed;
+    border-radius: 10px;
+    padding: 9px 13px;
+}
+
+:deep(.modal-body .form-control:focus) {
+    border-color: #6366f1;
+    box-shadow: none;
 }
 </style>
