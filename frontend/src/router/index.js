@@ -22,6 +22,7 @@ import QuestionDetails from '@/views/QuestionDetails.vue'
 import MesEvaluations from '@/views/MesEvaluations.vue'
 import PageEvaluation from '@/views/PageEvaluation.vue'
 import QuizView from '@/views/QuizView.vue'
+import PageErreur from '@/views/PageErreur.vue'
 
 
 const router = createRouter({
@@ -141,7 +142,18 @@ const router = createRouter({
       path: '/quiz',
       name: 'quiz',
       component: QuizView
-    }
+    },
+    {
+      path: '/erreur/:code',
+      name: 'erreur',
+      component: PageErreur,
+      props: true,
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      component: PageErreur,
+    },
   ],
 })
 

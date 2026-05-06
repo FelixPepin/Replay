@@ -112,8 +112,8 @@ def mesVentes(id_utilisateur):
                 })
                 ventes = curseur.fetchall()
     except mysql.connector.Error as err:
-        print(err)
-        abort(500)
+        current_app.logger.exception(err)
+        return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500
     return jsonify(ventes)
 # Permet de sélectionner une vente précise
 @bp_vente.route("/vente/<int:id_vente>", methods=['GET'])
@@ -130,8 +130,8 @@ def vente(id_vente):
                 })
                 vente = curseur.fetchone()
     except mysql.connector.Error as err:
-        print(err)
-        abort(500)
+        current_app.logger.exception(err)
+        return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500
     return jsonify(vente)
 
 @bp_vente.route("/modifier/<int:idVente>", methods=['POST'])
@@ -211,7 +211,8 @@ def getVentes():
         return jsonify(ventes), 200
     except mysql.connector.Error as error:
         current_app.logger.exception(error)
-        
+        return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500
+
 
 @bp_vente.route("/vente/<int:id_vente>/acheter", methods=['POST'])
 def acheterVente(id_vente):
