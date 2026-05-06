@@ -1,4 +1,4 @@
-from flask import request, Blueprint, abort, jsonify, current_app
+from flask import request, Blueprint, jsonify, current_app
 import mysql.connector
 import bd
 import os
@@ -116,6 +116,7 @@ def get_locations():
 
     except mysql.connector.Error as error:
         current_app.logger.exception(error)
+        return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500
 
 # Permet d'afficher les locations d'un vendeur
 @bp_location.route("/mesLocations/<int:id_utilisateur>", methods=['GET'])
@@ -132,11 +133,11 @@ def mesLocations(id_utilisateur):
                 })
                 locations = curseur.fetchall()
     except mysql.connector.Error as err:
-        print(err)
-        abort(500)
+        current_app.logger.exception(err)
+        return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500
     return jsonify(locations)
 
-# Permet de sélectionner une vente précise
+# Permet de sélectionner une location précise
 @bp_location.route("/location/<int:id_location>", methods=['GET'])
 def vente(id_location):
     location = None
@@ -153,8 +154,8 @@ def vente(id_location):
                 })
                 location = curseur.fetchone()
     except mysql.connector.Error as err:
-        print(err)
-        abort(500)
+        current_app.logger.exception(err)
+        return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500
     return jsonify(location)
 
 @bp_location.route("/supprimerLocation/<int:id_location>", methods=['POST'])
