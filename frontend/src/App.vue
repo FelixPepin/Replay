@@ -111,6 +111,12 @@ function deconnecter() {
             <i class="fi fi-br-star"></i>
             Évaluer un vendeur
           </RouterLink>
+
+          <p class="sb-section">Mon compte</p>
+          <RouterLink to="/profil" class="sb-link">
+            <i class="fi fi-br-user"></i>
+            Mon profil
+          </RouterLink>
         </template>
         <template v-if="auth.role === 'admin'">
 
