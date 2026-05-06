@@ -1,6 +1,6 @@
 <template>
     <main class="container mt-5">
-        <div class="card p-4 shadow-sm" style="background-color: #fde8e8; border-radius: 20px;">
+        <div class="card p-4 shadow-sm mb-5" style="background-color: #fde8e8; border-radius: 20px;">
             <div class="row">
 
                 <div class="col-md-6">
