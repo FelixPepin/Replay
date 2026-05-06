@@ -124,13 +124,19 @@ def noter_evaluation(id_vendeur):
                         'UPDATE utilisateurs SET note = %(note)s, nbEvaluation = %(nb)s WHERE Id = %(id)s',
                         {'note': round(nouvelleNote, 1), 'nb': nouveauNbEvaluation, 'id': id_vendeur}
                     )
-        return jsonify({"succes": True}), 200
+        return jsonify({
+            "succes": True,
+            "ancienneNote": round(user['note'], 1),
+            "ancienNbEvaluation": user['nbEvaluation'],
+            "nouvelleNote": round(nouvelleNote, 1),
+            "nouveauNbEvaluation": nouveauNbEvaluation
+        }), 200
 
     except mysql.connector.Error as error:
         current_app.logger.exception(error)
-        return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500   
-    
-    
+        return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500
+
+
 @bp_users.route("/profil/nom", methods=['PATCH'])
 def modifierNom():
     utilisateur = get_utilisateur_connecte()
