@@ -150,7 +150,7 @@ const reinitialiserFiltres = () => {
 }
 
 const jeuxFiltrees = computed(() => {
-  let liste = [...jeux.value]
+  let liste = jeux.value.filter(jeu => !jeu.estVendu && jeu.VendeurId !== auth.userId)
   if (liste.length === 0) return []
 
 
