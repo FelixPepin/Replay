@@ -71,9 +71,11 @@ onMounted(async () => {
             vendeurId.value = data.VendeurId
             typeConsole.value = data.TypeConsole
             estVendu.value = data.estVendu
+        } else if (res.status >= 500) {
+            router.push('/erreur/500')
         }
     } catch (e) {
-        console.error('Erreur chargement:', e)
+        router.push('/erreur/500')
     }
 })
 
@@ -93,8 +95,10 @@ async function acheter() {
             const data = await res.json()
             if (res.ok && data.url) {
                 window.location.href = data.url
+            } else if (res.status >= 500) {
+                router.push('/erreur/500')
             } else {
-                console.error('Erreur création session Stripe:', data)
+                notif.setNotif('Erreur lors de la création du paiement', 'danger')
             }
         } else {
             const res = await fetch(`/api/vente/${idVente}/acheter`, { method: 'POST' })
@@ -106,10 +110,14 @@ async function acheter() {
                 await fetch('/api/evaluation', { method: 'POST', body: evalData })
                 notif.setNotif("Jeu acheté avec succès !")
                 router.push('/achat')
+            } else if (res.status === 405) {
+                router.push('/erreur/405')
+            } else if (res.status >= 500) {
+                router.push('/erreur/500')
             }
         }
     } catch (e) {
-        console.error('Erreur achat:', e)
+        router.push('/erreur/500')
     }
 }
 </script>

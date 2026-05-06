@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request, abort
+from flask import Blueprint, jsonify, request, current_app
 from werkzeug.utils import secure_filename
 import mysql.connector
 import bd
@@ -24,8 +24,8 @@ def getJeux():
                 jeux = curseur.fetchall()
         return jsonify(jeux), 200
     except mysql.connector.Error as e:
-        print(f"Erreur SQL Jeux : {e}")
-        abort(500)
+        current_app.logger.exception(e)
+        return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500
         
 @bp_forum.route("/jeux", methods=['POST'])
 def creerJeu():
@@ -60,8 +60,9 @@ def creerJeu():
                 jeu = curseur.fetchone()
             conn.commit()
         return jsonify(jeu), 201
-    except mysql.connector.Error:
-        abort(500)
+    except mysql.connector.Error as e:
+        current_app.logger.exception(e)
+        return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500
 
 @bp_forum.route("/jeux/<int:id>", methods=['DELETE'])
 def supprimerJeu(id):
@@ -98,8 +99,8 @@ def getQuestionsParJeu(jeu_id):
                 questions = curseur.fetchall()
         return jsonify(questions), 200
     except mysql.connector.Error as e:
-        print(f"Erreur SQL : {e}")
-        abort(500)
+        current_app.logger.exception(e)
+        return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500
 
 @bp_forum.route("/jeux/<int:jeu_id>/questions", methods=['POST'])
 def creerQuestion(jeu_id):
@@ -131,7 +132,7 @@ def creerQuestion(jeu_id):
             conn.commit()
         return jsonify(question), 201
     except mysql.connector.Error as e:
-        print(f"Erreur SQL précise : {e}")
+        current_app.logger.exception(e)
         return jsonify({"erreurs": {"serveur": "Erreur lors de l'insertion en base"}}), 500
     
 @bp_forum.route("/questions/<int:question_id>", methods=['GET'])
@@ -249,5 +250,5 @@ def supprimer_question(id_question):
                 conn.commit()
         return jsonify({"succes": True}), 200
     except mysql.connector.Error as e:
-        print(f"Erreur suppression : {e}")
-        return jsonify({"erreurs": {"serveur": "Erreur SQL"}}), 500
+        current_app.logger.exception(e)
+        return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500
