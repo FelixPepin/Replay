@@ -86,12 +86,9 @@
                         <p class="card-text text-primary fw-bold">
                             <span class="text-black">Date fin : </span> {{ formatDate(jeu.DateFin) }}
                         </p>
-                        <RouterLink v-if="jeu.estDisponible !== 0" :to="`/louer/${jeu.Id}`" class="btn btn-success rounded-2">
+                        <RouterLink :to="`/louer/${jeu.Id}`" class="btn btn-success rounded-2">
                             Louer
                         </RouterLink>
-                        <button v-else class="btn btn-danger rounded-2" disabled>
-                            Indisponible
-                        </button>
                     </div>
                 </div>
             </div>
@@ -101,6 +98,7 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue';
 import { useNotifStore } from '@/stores/notif'
+import { useAuthStore } from '@/stores/auth'
 
 function formatDate(date) {
     const d = new Date(date)
@@ -111,6 +109,7 @@ function formatDate(date) {
 }
 import axios from 'axios'
 const tri = ref('alpha')
+const auth = useAuthStore()
 const notif = useNotifStore()
 const recherche = ref('')
 const jeux = ref([])
@@ -142,6 +141,8 @@ const reinitialiserFiltres = () => {
 const jeuxTriees = computed(() => {
     let liste = [...jeux.value]
     if (liste.length === 0) return []
+
+    liste = liste.filter(jeu => jeu.estDisponible !== 0 && jeu.LocateurId !== auth.userId)
 
     if (recherche.value.trim() !== '')
         liste = liste.filter(jeu => jeu.NomJeu.toLowerCase().includes(recherche.value.toLowerCase()))

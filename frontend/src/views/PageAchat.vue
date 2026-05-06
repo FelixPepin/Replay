@@ -88,12 +88,9 @@
             <p class="card-text">Vendeur : {{ jeu.NomUtilisateur }}</p>
             <p class="card-text">Livraison : {{ jeu.TypeLivraison }}</p>
             <p class="card-text">Paiement : {{ jeu.TypePaiement }}</p>
-            <RouterLink v-if="!jeu.estVendu" :to="`/acheter/${jeu.Id}`" class="btn btn-success rounded-2">
+            <RouterLink :to="`/acheter/${jeu.Id}`" class="btn btn-success rounded-2">
               Acheter
             </RouterLink>
-            <button v-else class="btn btn-danger rounded-2" disabled>
-              Vendu
-            </button>
           </div>
         </div>
       </div>
@@ -138,6 +135,8 @@ const reinitialiserFiltres = () => {
 const jeuxTriees = computed(() => {
   let liste = [...jeux.value]
   if (liste.length === 0) return []
+
+  liste = liste.filter(jeu => !jeu.estVendu && jeu.VendeurId !== auth.userId)
 
   if (recherche.value.trim() !== '')
     liste = liste.filter(jeu => jeu.NomJeu.toLowerCase().includes(recherche.value.toLowerCase()))
