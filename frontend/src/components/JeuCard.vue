@@ -1,10 +1,9 @@
 <template>
-    <div class="game-card" :class="{ 'game-card--vendu': jeu.estVendu }">
+    <div class="game-card">
 
         <div class="game-img-wrap">
             <img :src="`/static/images/ajouts/${jeu.Photo}`" :alt="jeu.NomJeu" class="game-img" />
             <span class="game-console-badge">{{ jeu.TypeConsole }}</span>
-            <span v-if="jeu.estVendu" class="vendu-overlay">Vendu</span>
         </div>
 
         <div class="game-body">
@@ -166,10 +165,6 @@ function formatDate(date) {
     border-color: #6366f1;
 }
 
-.game-card--vendu {
-    opacity: 0.6;
-}
-
 .game-img-wrap {
     position: relative;
     height: 180px;
@@ -199,21 +194,6 @@ function formatDate(date) {
     padding: 3px 10px;
     border-radius: 50px;
     backdrop-filter: blur(4px);
-}
-
-.vendu-overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(26, 29, 35, 0.55);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Syne', sans-serif;
-    font-size: 20px;
-    font-weight: 800;
-    color: #fff;
-    letter-spacing: 2px;
-    backdrop-filter: blur(2px);
 }
 
 .game-body {
