@@ -1,7 +1,7 @@
 import os
 
 from dotenv import load_dotenv
-from flask import Flask, send_file
+from flask import Flask, send_file, jsonify
 from flask_cors import CORS
 
 from routes.authentification import bp_auth
@@ -41,6 +41,27 @@ def serve_frontend(path):
     if path and os.path.isfile(target):
         return send_file(target)
     return send_file(os.path.join(FRONTEND_DIST, 'index.html'))
+
+@app.errorhandler(400)
+def bad_request(e):
+    return jsonify({"erreur": "Requête invalide"}), 400
+
+@app.errorhandler(401)
+def unauthorized(e):
+    return jsonify({"erreur": "Non authentifié"}), 401
+
+@app.errorhandler(403)
+def forbidden(e):
+    return jsonify({"erreur": "Accès interdit"}), 403
+
+@app.errorhandler(405)
+def method_not_allowed(e):
+    return jsonify({"erreur": "Méthode non autorisée"}), 405
+
+@app.errorhandler(500)
+def internal_error(e):
+    app.logger.exception(e)
+    return jsonify({"erreur": "Erreur serveur interne"}), 500
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

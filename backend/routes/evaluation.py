@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, make_response, url_for, Blueprint, session, flash, abort, jsonify, current_app
+from flask import Blueprint, jsonify, request, current_app
 import mysql.connector
 import bd
 import os
@@ -49,8 +49,8 @@ def mesEvaluations(id_utilisateur):
                 })
                 mesEvaluations = curseur.fetchall()
     except mysql.connector.Error as err:
-        print(err)
-        abort(500)
+        current_app.logger.exception(err)
+        return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500
     return jsonify(mesEvaluations)
 
 # Permet de supprimer une évaluation
@@ -83,6 +83,6 @@ def get_evaluation(id_evaluation):
                 )
                 evaluation = curseur.fetchone()
     except mysql.connector.Error as err:
-        print(err)
-        abort(500)
+        current_app.logger.exception(err)
+        return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500
     return jsonify(evaluation)
