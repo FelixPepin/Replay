@@ -22,6 +22,7 @@ import QuestionDetails from '@/views/QuestionDetails.vue'
 import MesEvaluations from '@/views/MesEvaluations.vue'
 import PageEvaluation from '@/views/PageEvaluation.vue'
 import QuizView from '@/views/QuizView.vue'
+import Profile from '@/views/Profile.vue'
 
 
 const router = createRouter({
@@ -141,6 +142,11 @@ const router = createRouter({
       path: '/quiz',
       name: 'quiz',
       component: QuizView
+    },
+    {
+      path: '/profil',
+      name: 'Profil',
+      component : Profile
     }
   ],
 })
