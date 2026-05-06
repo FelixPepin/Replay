@@ -134,3 +134,25 @@ def noter_evaluation(id_vendeur):
     except mysql.connector.Error as error:
         current_app.logger.exception(error)
         return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500   
+    
+    
+@bp_users.route("/users/<int:id>", methods=['DELETE'])
+def supprimerUser(id):
+    try:
+        with bd.creer_connexion() as conn:
+            with conn.get_curseur(dictionary=True) as curseur:
+
+                curseur.execute('SELECT id, role FROM utilisateurs WHERE id = %s', (id,))
+                cible = curseur.fetchone()
+
+                if not cible:
+                    return jsonify({"erreurs": {"serveur": "Utilisateur introuvable"}}), 404
+
+                if cible['role'] == 'admin':
+                    return jsonify({"erreurs": {"serveur": "Impossible de supprimer un administrateur"}}), 403
+
+                curseur.execute('DELETE FROM utilisateurs WHERE id = %s', (id,))
+            conn.commit()
+        return jsonify({"succes": True}), 200
+    except mysql.connector.Error:
+        abort(500)
