@@ -134,3 +134,75 @@ def noter_evaluation(id_vendeur):
     except mysql.connector.Error as error:
         current_app.logger.exception(error)
         return jsonify({"erreurs": {"serveur": "Erreur de base de données"}}), 500   
+    
+    
+@bp_users.route("/profil/nom", methods=['PATCH'])
+def modifierNom():
+    donnees = request.get_json()
+    nom = donnees.get('nomUtilisateur', '').strip()
+
+    if not nom:
+        return jsonify({"erreurs": {"nomUtilisateur": "Le nom est obligatoire"}}), 400
+
+    try:
+        with bd.creer_connexion() as conn:
+            with conn.get_curseur() as curseur:
+                curseur.execute(
+                    'UPDATE utilisateurs SET nomUtilisateur = %s WHERE id = %s',
+                    (nom, session['id'])
+                )
+            conn.commit()
+        return jsonify({"succes": True}), 200
+    except mysql.connector.Error:
+        abort(500)
+
+
+@bp_users.route("/profil/motdepasse", methods=['PATCH'])
+def modifierMotDePasse():
+    donnees = request.get_json()
+    actuel = donnees.get('actuel', '')
+    nouveau = donnees.get('nouveau', '')
+
+    if not actuel or not nouveau:
+        return jsonify({"erreurs": {"general": "Champs manquants"}}), 400
+
+    try:
+        with bd.creer_connexion() as conn:
+            with conn.get_curseur(dictionary=True) as curseur:
+                curseur.execute('SELECT motDePasse FROM utilisateurs WHERE id = %s', (session['id'],))
+                user = curseur.fetchone()
+
+                if not bcrypt.checkpw(actuel.encode(), user['motDePasse'].encode()):
+                    return jsonify({"erreurs": {"actuel": "Mot de passe actuel incorrect"}}), 400
+
+                hash_nouveau = bcrypt.hashpw(nouveau.encode(), bcrypt.gensalt()).decode()
+                curseur.execute(
+                    'UPDATE utilisateurs SET motDePasse = %s WHERE id = %s',
+                    (hash_nouveau, session['id'])
+                )
+            conn.commit()
+        return jsonify({"succes": True}), 200
+    except mysql.connector.Error:
+        abort(500)
+
+
+@bp_users.route("/profil", methods=['DELETE'])
+def supprimerCompte():
+    donnees = request.get_json()
+    mot_de_passe = donnees.get('motDePasse', '')
+
+    try:
+        with bd.creer_connexion() as conn:
+            with conn.get_curseur(dictionary=True) as curseur:
+                curseur.execute('SELECT motDePasse FROM utilisateurs WHERE id = %s', (session['id'],))
+                user = curseur.fetchone()
+
+                if not bcrypt.checkpw(mot_de_passe.encode(), user['motDePasse'].encode()):
+                    return jsonify({"erreurs": {"motDePasse": "Mot de passe incorrect"}}), 400
+
+                curseur.execute('DELETE FROM utilisateurs WHERE id = %s', (session['id'],))
+            conn.commit()
+        session.clear()
+        return jsonify({"succes": True}), 200
+    except mysql.connector.Error:
+        abort(500)
