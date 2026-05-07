@@ -89,7 +89,7 @@ async function soumettre() {
   if (!password.value) erreurs.password = 'Le mot de passe est requis'
   else if (!regexMdp.test(password.value))
     erreurs.password =
-      'Le mot de passe doit contenir huit caractères, au moins une minuscule, majuscule, un chiffre et un caractère spécial'
+      'Le mot de passe doit contenir au moins huit caractères, une minuscule, une majuscule, un chiffre et un caractère spécial'
   if (password.value !== confirm.value)
     erreurs.confirm = 'Les deux mots de passe doivent correspondre'
 
