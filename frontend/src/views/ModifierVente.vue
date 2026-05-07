@@ -93,7 +93,7 @@
                 class="form-control"
               />
             </div>
-            <button type="submit" class="btn btn-primary w-100">Modifier la vente.</button>
+            <button type="submit" class="btn btn-primary w-100">Modifier la vente</button>
           </form>
         </div>
         <div v-else>
