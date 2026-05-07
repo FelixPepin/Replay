@@ -4,7 +4,7 @@
         <div class="store-header">
             <div class="store-header-inner">
                 <div>
-                    <h1 class="store-title">Jeux en location</h1>
+                    <h1 class="fw-bold display-5">Jeux en location</h1>
                     <p class="store-subtitle">{{ jeuxTriees.length }} jeu{{ jeuxTriees.length !== 1 ? 'x' : '' }}
                         disponible{{ jeuxTriees.length !== 1 ? 's' : '' }}</p>
                 </div>
@@ -225,13 +225,6 @@ onMounted(async () => {
     flex-wrap: wrap;
 }
 
-.store-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 28px;
-    font-weight: 800;
-    color: #1a1d23;
-    letter-spacing: -0.5px;
-}
 
 .store-subtitle {
     font-size: 13px;
