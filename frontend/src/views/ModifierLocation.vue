@@ -70,11 +70,11 @@
               <label for="dateFin" class="form-label fw-bold">Date de fin</label>
               <input v-model="dateFin" type="date" id="dateFin" name="dateFin" class="form-control" />
             </div>
-            <button type="submit" class="btn btn-primary w-100">Modifier la location.</button>
+            <button type="submit" class="btn btn-primary w-100">Modifier la location</button>
           </form>
         </div>
         <div v-else>
-          <p class="alert alert-warning">Vous devez être le vendeur pour modifier cette vente.</p>
+          <p class="alert alert-warning">Vous devez être le locateur pour modifier cette location.</p>
         </div>
       </div>
     </div>
@@ -132,10 +132,10 @@ async function modifierLocation() {
     erreurs.choixPaiement = 'Veuillez choisir la méthode de paiement désirée'
   if (!adresse.value.trim()) erreurs.adresse = "L'adresse est requise."
   else if (adresse.value.trim().length < 5) erreurs.adresse = "L'adresse doit contenir au moins 5 caractères"
-  if (!dateDebut.value) erreurs.dateDebut = 'Veuillez entrez une date de début'
+  if (!dateDebut.value) erreurs.dateDebut = 'Veuillez entrer une date de début'
   if (dateDebut.value && dateDebut.value < new Date().toISOString().split('T')[0])
     erreurs.dateDebut = 'La date de début ne peut pas être dans le passé'
-  if (!dateFin.value) erreurs.dateFin = 'Veuillez entrez une date de fin'
+  if (!dateFin.value) erreurs.dateFin = 'Veuillez entrer une date de fin'
   if (dateFin.value && dateFin.value <= dateDebut.value)
         erreurs.dateFin = 'La date de fin doit être après la date de début'
 
