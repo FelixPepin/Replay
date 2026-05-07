@@ -170,10 +170,10 @@ export default {
         erreurs.choixPaiement = 'Veuillez choisir la méthode de paiement désirée'
       if (!adresse.value.trim()) erreurs.adresse = "L'adresse est requise."
       else if (adresse.value.trim().length < 5) erreurs.adresse = "L'adresse doit contenir au moins 5 caractères"
-      if (!dateDebut.value) erreurs.dateDebut = 'Veuillez entrez une date de début'
+      if (!dateDebut.value) erreurs.dateDebut = 'Veuillez entrer une date de début'
       if (dateDebut.value && dateDebut.value < new Date().toISOString().split('T')[0])
         erreurs.dateDebut = 'La date de début ne peut pas être dans le passé'
-      if (!dateFin.value) erreurs.dateFin = 'Veuillez entrez une date de fin'
+      if (!dateFin.value) erreurs.dateFin = 'Veuillez entrer une date de fin'
       if (dateFin.value && dateFin.value <= dateDebut.value)
         erreurs.dateFin = 'La date de fin doit être après la date de début'
 
