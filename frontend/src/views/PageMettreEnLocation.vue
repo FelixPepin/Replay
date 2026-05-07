@@ -104,7 +104,7 @@
               <label for="dateFin" class="form-label fw-bold">Date de fin</label>
               <input type="date" class="form-control" id="dateFin" v-model="dateFin" />
             </div>
-            <button type="submit" class="btn btn-primary w-100">Mettre en location</button>
+            <button type="submit" class="btn btn-primary w-100 mb-5">Mettre en location</button>
           </form>
         </div>
         <div v-else>
