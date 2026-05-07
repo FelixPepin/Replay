@@ -267,6 +267,7 @@ onMounted(async () => {
   padding: 12px 32px;
   font-size: 14px;
   font-weight: 500;
+  margin-bottom: 3rem;
 }
 
 .notif-success {
