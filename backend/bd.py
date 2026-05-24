@@ -15,6 +15,7 @@ def creer_connexion():
         port=int(os.getenv("DB_PORT", 3306)),
         database=os.getenv("DB_NAME"),
         ssl_disabled=False,
+        ssl_verify_cert=False,
         raise_on_warnings=True
     )
 
