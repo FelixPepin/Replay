@@ -15,6 +15,8 @@
 - **Forum** : poser des questions et discuter par jeu vidéo
 - **Évaluations** : laisser une note et un commentaire après une transaction
 - **Comptes utilisateurs** : inscription, connexion, gestion du profil
+- **Quiz** : questionnaires de culture générale par jeu vidéo (10 questions à choix multiples par jeu)
+- **Panel admin** : interface de gestion des utilisateurs permettant de consulter tous les comptes et de modifier les rôles (admin, vendeur, client, coach)
 
 Consoles supportées : PS5, PS4, PS3, Xbox Series X, Xbox One, Xbox 360, Nintendo Switch 2, Nintendo Switch, Wii U, Wii
 
