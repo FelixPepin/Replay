@@ -1,0 +1,31 @@
+# Base de données locale de Replay.
+# Au premier démarrage (volume vide), MySQL exécute dans l'ordre :
+#   01-schema.sql  puis  02-seed.sql
+# Pour repartir de zéro : docker compose down -v && docker compose up -d
+services:
+  db:
+    image: mysql:8.4
+    container_name: replay-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: replay
+      MYSQL_USER: replay
+      MYSQL_PASSWORD: replay
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
+    volumes:
+      - replay-db-data:/var/lib/mysql
+      - ./backend/db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./backend/db/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  replay-db-data:
