@@ -52,8 +52,9 @@ def main():
         db_name = os.getenv("DB_NAME", "replay")
         db_password = os.getenv("DB_PASSWORD", "replay").replace("'", "''")
         print(f"Création de l'utilisateur {db_user}...")
+        # mysql_native_password : permet la connexion sans SSL (DB_SSL=false)
         sql = (
-            f"CREATE USER IF NOT EXISTS '{db_user}'@'localhost' IDENTIFIED BY '{db_password}';"
+            f"CREATE USER IF NOT EXISTS '{db_user}'@'localhost' IDENTIFIED WITH mysql_native_password BY '{db_password}';"
             f"GRANT ALL PRIVILEGES ON `{db_name}`.* TO '{db_user}'@'localhost';"
             "FLUSH PRIVILEGES;"
         )
