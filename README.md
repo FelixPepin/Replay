@@ -28,18 +28,14 @@ Consoles supportées : PS5, PS4, PS3, Xbox Series X, Xbox One, Xbox 360, Nintend
 |---|---|
 | Frontend | Vue.js + Vite |
 | Backend | Python / Flask |
-| Base de données | MySQL (hébergé sur Aiven) |
-| Hébergement | Render |
+| Base de données | MySQL 8 (locale, via Docker) |
+| Paiement en ligne | Stripe (mode test, facultatif) |
 
 ---
 
-## Site en ligne
+## Statut du projet
 
-Le projet est hébergé sur Render et accessible ici :
-
-**[https://replay-c3nw.onrender.com/](https://replay-c3nw.onrender.com/)**
-
-> Note : l'instance Render est sur un plan gratuit — le premier chargement peut prendre quelques secondes le temps que le serveur se réveille.
+Replay est un travail réalisé au cégep durant la session **Hiver 2026**. Il n'est **plus hébergé en ligne** : le projet se lance uniquement en local, sans aucune dépendance à un service externe (hormis Stripe, facultatif).
 
 ---
 
@@ -47,13 +43,47 @@ Le projet est hébergé sur Render et accessible ici :
 
 ### Prérequis
 
-- Node.js (v18+)
-- Python 3.10+
-- pip
+- [Docker](https://www.docker.com/) (Docker Desktop sous Windows/macOS)
+- Python 3.10+ et pip
+- Node.js 20.19+ ou 22.12+
 
----
+### 1. Base de données (MySQL)
 
-### Backend (Flask)
+```bash
+docker compose up -d
+```
+
+Au premier démarrage, le conteneur `replay-db` crée la base `replay` et exécute automatiquement [`backend/db/schema.sql`](backend/db/schema.sql) puis [`backend/db/seed.sql`](backend/db/seed.sql). MySQL écoute sur `localhost:3306` (utilisateur `replay`, mot de passe `replay`).
+
+Pour **réinitialiser** la base (efface toutes les données et réexécute les scripts) :
+
+```bash
+docker compose down -v
+docker compose up -d
+```
+
+<details>
+<summary>Sans Docker (MySQL installé localement)</summary>
+
+Avec un serveur MySQL 8 qui écoute sur le port 3306 et le client `mysql` dans le PATH :
+
+```bash
+cd backend
+python db/reset_db.py -u root
+```
+
+Le script exécute `schema.sql` puis `seed.sql` et crée l'utilisateur de l'application défini dans `backend/.env` (`replay` / `replay`). Si `mysql` n'est pas dans le PATH, passez son chemin avec `--mysql "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe"`.
+
+Équivalent manuel :
+
+```bash
+mysql -u root -p < backend/db/schema.sql
+mysql -u root -p < backend/db/seed.sql
+```
+
+</details>
+
+### 2. Backend (Flask)
 
 ```bash
 cd backend
@@ -63,11 +93,19 @@ python app.py
 
 L'API démarre sur `http://localhost:5000`.
 
-**À propos du fichier `.env` :** En temps normal, ce fichier ne devrait jamais être versionné dans Git car il contient des identifiants sensibles. Il est ici inclus **intentionnellement** pour permettre à quiconque de faire tourner le projet en local sans configuration supplémentaire. Les identifiants donnent accès à une base de données de développement sans données sensibles.
+La configuration est lue depuis [`backend/.env`](backend/.env), versionné volontairement : il ne contient que des valeurs locales sans données sensibles, alignées sur `docker-compose.yml`. Le modèle [`backend/.env.example`](backend/.env.example) documente chaque variable :
 
----
+| Variable | Rôle |
+|---|---|
+| `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` | Connexion MySQL |
+| `DB_SSL` | `false` en local ; `true` pour forcer SSL vers une BD distante |
+| `SECRET_KEY` | Signature des jetons JWT |
+| `STRIPE_SECRET_KEY` | Clé de test Stripe (`sk_test_...`), facultative |
+| `FRONTEND_URL` | URL du frontend (CORS et redirections Stripe) |
 
-### Frontend (Vue.js)
+> Sans clé Stripe, les annonces dont le paiement est « En main propre » fonctionnent normalement ; le paiement « En ligne » renvoie une erreur.
+
+### 3. Frontend (Vue.js)
 
 ```bash
 cd frontend
@@ -75,4 +113,20 @@ npm install
 npm run dev
 ```
 
-Le frontend démarre sur `http://localhost:5173` et pointe automatiquement vers le backend local.
+Le frontend démarre sur `http://localhost:5173`. Vite redirige `/api` et `/static` vers le backend `http://localhost:5000`.
+
+---
+
+## Comptes de test
+
+| Rôle | Courriel | Mot de passe |
+|---|---|---|
+| Admin | `admin@replay.test` | `Admin123!` |
+| Vendeur | `vendeur@replay.test` | `Vendeur123!` |
+| Vendeur | `julie@replay.test` | `Vendeur123!` |
+| Client | `client@replay.test` | `Client123!` |
+| Coach (Minecraft, GTA V) | `coach@replay.test` | `Coach123!` |
+
+Les données de test comprennent aussi des annonces de vente et de location (dates relatives au jour de l'initialisation), des réservations, des évaluations en attente et des questions/réponses dans le forum.
+
+Les quiz (Minecraft, Pokémon, God of War, GTA V, Fortnite — 10 questions chacun) sont définis dans [`frontend/src/data/quizzes.js`](frontend/src/data/quizzes.js). Un score parfait promeut l'utilisateur coach du jeu correspondant (l'`id` du quiz correspond à `jeux.id` en base).
