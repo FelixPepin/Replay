@@ -19,7 +19,7 @@ from routes.evaluation import bp_evaluation
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "une_clé_secrète_dev")
-CORS(app)
+CORS(app, origins=[os.environ.get("FRONTEND_URL", "http://localhost:5173")])
 app.register_blueprint(bp_auth, url_prefix='/api')
 app.register_blueprint(bp_vente, url_prefix='/api')
 app.register_blueprint(bp_location, url_prefix='/api')
