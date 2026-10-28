@@ -1,6 +1,7 @@
 from flask import request, Blueprint, abort, jsonify, current_app
 import mysql.connector
 import bd
+import bcrypt
 import jwt
 import datetime
 

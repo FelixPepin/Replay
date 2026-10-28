@@ -3,11 +3,11 @@
 -- À exécuter après schema.sql.
 --
 -- Comptes (mots de passe hachés avec bcrypt, comme routes/authentification.py) :
---   admin@replay.local    / Admin123!     (admin)
---   vendeur@replay.local  / Vendeur123!   (vendeur)
---   julie@replay.local    / Vendeur123!   (vendeur)
---   client@replay.local   / Client123!    (client)
---   coach@replay.local    / Coach123!     (coach : Minecraft, GTA V)
+--   admin@replay.test    / Admin123!     (admin)
+--   vendeur@replay.test  / Vendeur123!   (vendeur)
+--   julie@replay.test    / Vendeur123!   (vendeur)
+--   client@replay.test   / Client123!    (client)
+--   coach@replay.test    / Coach123!     (coach : Minecraft, GTA V)
 --
 -- Les dates de location sont relatives à CURDATE() pour que les annonces
 -- restent disponibles peu importe le moment où la BD est initialisée.
@@ -20,11 +20,11 @@ USE replay;
 -- Utilisateurs
 -- ------------------------------------------------------------
 INSERT INTO utilisateurs (Id, NomUtilisateur, MotDePasse, Courriel, Role, note, nbEvaluation) VALUES
-    (1, 'Admin',       '$2b$12$u25eyIlkkXYgJU9GABPreOP/P1xDCGqxosGwuOIwkNIf.u3VKERoe', 'admin@replay.local',   'admin',   0.0, 0),
-    (2, 'MarcVend',    '$2b$12$9S.ISN3Pf9GRNQJPEfSxauVgFTOdSowmTdiAclFaMtg1K/nJVkP1u', 'vendeur@replay.local', 'vendeur', 4.5, 2),
-    (3, 'SophieClient','$2b$12$0vY0Vbb89RAOBIoi/cyU4ugFemIM187cApsViaqQHLpRRlhc0Rk0C', 'client@replay.local',  'client',  0.0, 0),
-    (4, 'CoachLeo',    '$2b$12$VGQ72IoL0SU9YQsSkwAQXOSBkGZuH0bj6lmDpr0aCfjAoTrn8DXj2', 'coach@replay.local',   'coach',   0.0, 0),
-    (5, 'JulieGames',  '$2b$12$9S.ISN3Pf9GRNQJPEfSxauVgFTOdSowmTdiAclFaMtg1K/nJVkP1u', 'julie@replay.local',   'vendeur', 4.0, 1);
+    (1, 'Admin',       '$2b$12$u25eyIlkkXYgJU9GABPreOP/P1xDCGqxosGwuOIwkNIf.u3VKERoe', 'admin@replay.test',   'admin',   0.0, 0),
+    (2, 'MarcVend',    '$2b$12$9S.ISN3Pf9GRNQJPEfSxauVgFTOdSowmTdiAclFaMtg1K/nJVkP1u', 'vendeur@replay.test', 'vendeur', 4.5, 2),
+    (3, 'SophieClient','$2b$12$0vY0Vbb89RAOBIoi/cyU4ugFemIM187cApsViaqQHLpRRlhc0Rk0C', 'client@replay.test',  'client',  0.0, 0),
+    (4, 'CoachLeo',    '$2b$12$VGQ72IoL0SU9YQsSkwAQXOSBkGZuH0bj6lmDpr0aCfjAoTrn8DXj2', 'coach@replay.test',   'coach',   0.0, 0),
+    (5, 'JulieGames',  '$2b$12$9S.ISN3Pf9GRNQJPEfSxauVgFTOdSowmTdiAclFaMtg1K/nJVkP1u', 'julie@replay.test',   'vendeur', 4.0, 1);
 
 -- ------------------------------------------------------------
 -- Annonces de vente (photos dans backend/static/images/ajouts)
