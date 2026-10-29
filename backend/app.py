@@ -4,6 +4,9 @@ from dotenv import load_dotenv
 from flask import Flask, send_file, jsonify
 from flask_cors import CORS
 
+# Doit être appelé avant l'import des routes : certaines lisent l'environnement à l'import
+load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env'))
+
 from routes.authentification import bp_auth
 from routes.location import bp_location
 from routes.vente import bp_vente
@@ -14,11 +17,9 @@ from routes.forum import bp_forum
 from routes.evaluation import bp_evaluation
 
 
-load_dotenv()
-
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "une_clé_secrète_dev")
-CORS(app)
+CORS(app, origins=[os.environ.get("FRONTEND_URL", "http://localhost:5173")])
 app.register_blueprint(bp_auth, url_prefix='/api')
 app.register_blueprint(bp_vente, url_prefix='/api')
 app.register_blueprint(bp_location, url_prefix='/api')

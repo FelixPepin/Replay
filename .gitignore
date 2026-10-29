@@ -1,12 +1,21 @@
 # Claude
 .claude/
 
-# Backend
-backend/__pycache__/
-backend/*.pyc
+# Backend (Python)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+# Configuration locale (secrets) : seul backend/.env.example est versionné
+.env
+.env.*
+!.env.example
+
+
+# Dépendances Node (racine et frontend)
+node_modules/
 
 # Frontend
-frontend/node_modules/
 frontend/dist-ssr/
 frontend/coverage/
 frontend/.eslintcache
