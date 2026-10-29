@@ -6,7 +6,10 @@ __pycache__/
 *.py[cod]
 .venv/
 venv/
-# backend/.env est versionné volontairement (valeurs locales sans secret)
+# Configuration locale (secrets) : seul backend/.env.example est versionné
+.env
+.env.*
+!.env.example
 
 
 # Dépendances Node (racine et frontend)

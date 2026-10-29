@@ -54,17 +54,23 @@ Docker télécharge MySQL 8, crée la base `replay` et la remplit avec des donn�
 
 ### Étape 4 — Lancer le backend (API Flask)
 
-Dans le même terminal :
+Dans le même terminal, entrez dans le dossier `backend` et créez le fichier de configuration `.env` à partir du modèle fourni (une seule fois) :
 
 ```bash
 cd backend
+cp .env.example .env
+```
+
+> Sous Windows (invite de commandes ou PowerShell), utilisez `copy .env.example .env`.
+
+Le modèle fonctionne tel quel avec la base Docker : aucune valeur à modifier. Installez ensuite les dépendances et lancez l'API :
+
+```bash
 pip install -r requirements.txt
 python app.py
 ```
 
 Quand le terminal affiche `Running on http://127.0.0.1:5000`, l'API est prête. **Laissez ce terminal ouvert.**
-
-Aucune configuration n'est nécessaire : le fichier `backend/.env` est déjà fourni avec les bonnes valeurs.
 
 ### Étape 5 — Lancer le frontend (Vue.js)
 
@@ -110,6 +116,7 @@ Vous pouvez aussi créer votre propre compte avec le bouton « Inscription » en
 | `docker` : « cannot connect to the Docker daemon » | Docker Desktop n'est pas démarré. Ouvrez-le et attendez qu'il soit prêt. |
 | `docker compose up` : « port 3306 is already allocated » | Un autre MySQL (installé localement, WAMP, etc.) utilise le port 3306. Arrêtez-le, ou remplacez `"3306:3306"` par `"3307:3306"` dans `docker-compose.yml` et `DB_PORT=3306` par `DB_PORT=3307` dans `backend/.env`. |
 | Backend : « Can't connect to MySQL server » | La base n'a pas fini de démarrer. Attendez quelques secondes et relancez `python app.py`. Vérifiez avec `docker compose ps` que `replay-db` est démarré. |
+| Le site affiche « Erreur serveur » et le terminal du backend indique « Access denied for user » | Le fichier `backend/.env` n'existe pas : refaites `cp .env.example .env` dans `backend` (étape 4). |
 | `python` ou `pip` introuvable | Sous Windows, essayez `py` et `py -m pip`. Sinon, réinstallez Python en cochant « Add python.exe to PATH ». |
 | Le site affiche des erreurs ou une page vide | Vérifiez que le backend (étape 4) tourne toujours dans son terminal. |
 | Paiement « En ligne » en erreur | Normal sans clé Stripe : voir [Paiement en ligne (Stripe)](#paiement-en-ligne-stripe). Les annonces « En main propre » fonctionnent sans configuration. |
@@ -180,7 +187,7 @@ mysql -u root -p < backend/db/seed.sql
 
 ### Configuration (`backend/.env`)
 
-Le fichier [`backend/.env`](backend/.env) est versionné volontairement : il ne contient que des valeurs locales sans données sensibles, alignées sur `docker-compose.yml`. Le modèle [`backend/.env.example`](backend/.env.example) documente chaque variable :
+Le fichier `backend/.env` n'est **pas versionné** (il est ignoré par Git) : chacun le crée à partir du modèle [`backend/.env.example`](backend/.env.example), dont les valeurs par défaut sont alignées sur `docker-compose.yml`. N'y mettez vos propres clés (Stripe, etc.) que dans `backend/.env`, jamais dans le modèle. Variables disponibles :
 
 | Variable | Rôle |
 |---|---|
