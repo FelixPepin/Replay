@@ -66,6 +66,7 @@ cp .env.example .env
 Le modèle fonctionne tel quel avec la base Docker : aucune valeur à modifier. Installez ensuite les dépendances et lancez l'API :
 
 ```bash
+cd backend (si vous n'êtes pas déjà la)
 pip install -r requirements.txt
 python app.py
 ```
